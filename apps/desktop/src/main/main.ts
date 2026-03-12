@@ -113,7 +113,8 @@ async function bootstrap(): Promise<void> {
   if (initial.currentSession) {
     broadcastSessionResponse({
       session: initial.currentSession,
-      recentSessions: initial.recentSessions
+      recentSessions: initial.recentSessions,
+      warnings: []
     });
     windowManager.showWindow();
   }

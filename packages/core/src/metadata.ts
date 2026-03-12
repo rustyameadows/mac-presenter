@@ -98,8 +98,10 @@ async function readImageMetadata(
   stats: Awaited<ReturnType<typeof fs.stat>>
 ): Promise<ImageAssetMetadata> {
   const family = detectAssetFamily(filePath);
+  const extension = getExtension(filePath);
   const buffer = await fs.readFile(filePath);
-  const dimensions = imageSize(buffer);
+  const dimensions =
+    extension === ".tif" || extension === ".tiff" ? imageSize(filePath) : imageSize(buffer);
   const common = buildCommonMetadata(filePath, family, stats);
   const width = dimensions.width ?? null;
   const height = dimensions.height ?? null;
@@ -118,6 +120,9 @@ async function readVideoMetadata(
   filePath: string,
   stats: Awaited<ReturnType<typeof fs.stat>>
 ): Promise<VideoAssetMetadata> {
+  await fs.chmod(ffprobe.path, 0o755).catch(() => {
+    // The packaged app can lose the executable bit on relocated native helpers.
+  });
   const { stdout } = await execFileAsync(ffprobe.path, [
     "-v",
     "error",

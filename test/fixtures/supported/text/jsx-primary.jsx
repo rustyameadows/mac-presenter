@@ -1,0 +1,1 @@
+export const FixtureCard = () => <section>Presenter JSX fixture</section>;

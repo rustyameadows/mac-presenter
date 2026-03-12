@@ -2,6 +2,7 @@ import {
   deriveCurrentFamily,
   getCompareCapability,
   getSelectionEligibility,
+  type AssetLoadWarning,
   type AssetRecord,
   type SessionRecord
 } from "@presenter/core";
@@ -18,6 +19,26 @@ import { CompareStage } from "./components/CompareStage";
 import { GridBrowser } from "./components/GridBrowser";
 import { MetadataPanel } from "./components/MetadataPanel";
 import { TopRail, type PlaybackCommand } from "./components/TopRail";
+
+function buildNotice(error: string | undefined, warnings: AssetLoadWarning[]): string | null {
+  if (error && warnings.length > 0) {
+    return `${error} ${warnings.length} file${warnings.length === 1 ? "" : "s"} also reported warnings.`;
+  }
+
+  if (error) {
+    return error;
+  }
+
+  if (warnings.length > 0) {
+    const first = warnings[0];
+    const filename = first.path.split(/[/\\]/).at(-1) ?? first.path;
+    return warnings.length === 1
+      ? `${filename} could not be fully loaded.`
+      : `${warnings.length} files reported load warnings.`;
+  }
+
+  return null;
+}
 
 function getSelectedAssets(session: SessionRecord | null): AssetRecord[] {
   if (!session) {
@@ -48,7 +69,7 @@ function EmptyState(props: {
   onOpenFolder: () => Promise<void>;
 }) {
   return (
-    <div className="empty-shell">
+    <div className="empty-shell" data-testid="surface-empty">
       <div className="empty-hero">
         <span className="eyebrow">Presenter</span>
         <h1>Drop files or folders onto the menu bar icon.</h1>
@@ -98,7 +119,7 @@ export function App() {
         currentSession: response.session,
         recentSessions: response.recentSessions
       }));
-      setNotice(response.error ?? null);
+      setNotice(buildNotice(response.error, response.warnings));
     });
   });
 
@@ -155,7 +176,7 @@ export function App() {
   const family = deriveCurrentFamily(selectedAssets);
 
   if (!bootstrap) {
-    return <div className="loading-shell">Loading Presenter…</div>;
+    return <div className="loading-shell" data-testid="surface-loading">Loading Presenter…</div>;
   }
 
   if (!deferredSession) {
@@ -169,7 +190,7 @@ export function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-testid={`surface-${deferredSession.surface}`}>
       <TopRail
         family={family}
         assetCount={selectedAssets.length}
@@ -243,7 +264,7 @@ export function App() {
             recentSessions={bootstrap.recentSessions}
           />
         ) : (
-          <div className="workspace-shell">
+          <div className="workspace-shell" data-testid="workspace-shell">
             <CompareStage
               assets={selectedAssets}
               sessionView={deferredSession.view}

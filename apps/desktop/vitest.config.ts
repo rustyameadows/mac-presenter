@@ -10,7 +10,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@presenter/core": path.resolve(__dirname, "../../packages/core/src")
+      "@presenter/core": path.resolve(__dirname, "../../packages/core/src"),
+      "@presenter/core/node": path.resolve(__dirname, "../../packages/core/src/node.ts")
     }
   }
 });

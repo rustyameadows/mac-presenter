@@ -23,6 +23,10 @@ import {
 
 import type { PlaybackCommand } from "./TopRail";
 
+function resolveTextLanguage(filename: string): FileContents["lang"] {
+  return getFiletypeFromFileName(filename) ?? ("text" as FileContents["lang"]);
+}
+
 async function loadImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -77,23 +81,25 @@ function TextFilePane(props: {
   const file: FileContents = {
     name: props.asset.name,
     contents: props.content,
-    lang: getFiletypeFromFileName(props.asset.name) ?? "text"
+    lang: resolveTextLanguage(props.asset.name)
   };
 
   return (
-    <div className="asset-pane asset-pane-text">
+    <div className="asset-pane asset-pane-text" data-testid="text-viewport">
       <div className="asset-label">{props.asset.name}</div>
-      <File
-        file={file}
-        options={{
-          themeType: "dark",
-          overflow: "scroll",
-          disableLineNumbers: false
-        }}
-        style={{
-          fontSize: `${12 * props.view.zoom}px`
-        }}
-      />
+      <div data-testid="text-body">
+        <File
+          file={file}
+          options={{
+            themeType: "dark",
+            overflow: "scroll",
+            disableLineNumbers: false
+          }}
+          style={{
+            fontSize: `${12 * props.view.zoom}px`
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -109,29 +115,31 @@ function TextDiffPane(props: {
     {
       name: props.left.name,
       contents: props.leftContent,
-      lang: getFiletypeFromFileName(props.left.name) ?? "text"
+      lang: resolveTextLanguage(props.left.name)
     },
     {
       name: props.right.name,
       contents: props.rightContent,
-      lang: getFiletypeFromFileName(props.right.name) ?? "text"
+      lang: resolveTextLanguage(props.right.name)
     }
   );
 
   return (
-    <div className="diff-shell">
-      <div className="diff-summary">
+    <div className="diff-shell" data-testid="diff-viewport">
+      <div className="diff-summary" data-testid="diff-summary">
         Text/code diff · {props.view.textDiffMode === "split" ? "split" : "unified"} mode
       </div>
-      <FileDiff
-        fileDiff={diff}
-        options={{
-          themeType: "dark",
-          diffStyle: props.view.textDiffMode,
-          lineDiffType: "word",
-          overflow: "scroll"
-        }}
-      />
+      <div data-testid="text-body">
+        <FileDiff
+          fileDiff={diff}
+          options={{
+            themeType: "dark",
+            diffStyle: props.view.textDiffMode,
+            lineDiffType: "word",
+            overflow: "scroll"
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -215,16 +223,16 @@ function VisualDiffPane(props: { left: AssetRecord; right: AssetRecord }) {
   }, [props.left.path, props.right.path]);
 
   if (!state) {
-    return <div className="diff-shell">Rendering diff…</div>;
+    return <div className="diff-shell" data-testid="diff-viewport">Rendering diff…</div>;
   }
 
   return (
-    <div className="diff-shell">
-      <div className="diff-summary">
+    <div className="diff-shell" data-testid="diff-viewport">
+      <div className="diff-summary" data-testid="diff-summary">
         {state.mismatchCount.toLocaleString()} changed pixels
         {state.normalized ? " · normalized before diff" : ""}
       </div>
-      <img className="diff-image" src={state.dataUrl} alt="Diff output" />
+      <img className="diff-image" data-testid="image-viewport" src={state.dataUrl} alt="Diff output" />
     </div>
   );
 }
@@ -241,16 +249,18 @@ function RevealPane(props: {
     : { clipPath: `inset(0 0 ${100 - reveal}% 0)` };
 
   return (
-    <div className="reveal-shell">
-      <div className="reveal-stage" style={backgroundStyle(props.view)}>
+    <div className="reveal-shell" data-testid="compare-stage">
+      <div className="reveal-stage" style={backgroundStyle(props.view)} data-testid="asset-viewport">
         <img
           className="reveal-image"
+          data-testid="image-viewport"
           src={window.presenter.getMediaUrl(props.right.path)}
           alt={props.right.name}
           style={mediaStyle(props.view)}
         />
         <img
           className="reveal-image reveal-top"
+          data-testid="image-viewport"
           src={window.presenter.getMediaUrl(props.left.path)}
           alt={props.left.name}
           style={{ ...mediaStyle(props.view), ...clipStyle }}
@@ -282,20 +292,32 @@ function VisualPane(props: {
   const mediaUrl = window.presenter.getMediaUrl(props.asset.path);
 
   return (
-    <div className="asset-pane">
+    <div className="asset-pane" data-testid="compare-stage">
       <div className="asset-label">{props.asset.name}</div>
-      <div className="asset-viewport" style={backgroundStyle(props.view)} ref={props.setScrollRef}>
+      <div
+        className="asset-viewport"
+        data-testid="asset-viewport"
+        style={backgroundStyle(props.view)}
+        ref={props.setScrollRef}
+      >
         {props.asset.family === "video" ? (
           <video
             ref={props.setVideoRef}
             className="asset-media"
+            data-testid="video-viewport"
             src={mediaUrl}
             controls
             preload="metadata"
             style={baseStyle}
           />
         ) : (
-          <img className="asset-media" src={mediaUrl} alt={props.asset.name} style={baseStyle} />
+          <img
+            className="asset-media"
+            data-testid={props.asset.family === "gif" ? "gif-viewport" : "image-viewport"}
+            src={mediaUrl}
+            alt={props.asset.name}
+            style={baseStyle}
+          />
         )}
       </div>
     </div>
@@ -448,7 +470,7 @@ export function CompareStage(props: {
   }, [props.assets, props.sessionView.syncPlayback]);
 
   if (props.assets.length === 0) {
-    return <div className="stage-shell">Nothing selected.</div>;
+    return <div className="stage-shell" data-testid="compare-stage">Nothing selected.</div>;
   }
 
   if (props.sessionView.layout === "diff" && props.assets.length === 2) {
@@ -499,7 +521,7 @@ export function CompareStage(props: {
           : "stage-grid stage-grid-side";
 
   return (
-    <section className={stageClass}>
+    <section className={stageClass} data-testid="compare-stage">
       {props.assets.map((asset, index) => {
         if (asset.family === "text") {
           return (

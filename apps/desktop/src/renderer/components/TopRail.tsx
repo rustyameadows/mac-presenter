@@ -54,7 +54,7 @@ export function TopRail(props: {
   onPlaybackCommand: (command: PlaybackCommand) => void;
 }) {
   return (
-    <header className="top-rail">
+    <header className="top-rail" data-testid="top-rail">
       <div className="rail-group">
         <button
           type="button"
@@ -235,7 +235,11 @@ export function TopRail(props: {
         ) : null}
       </div>
 
-      {props.notice ? <div className="notice-bar">{props.notice}</div> : null}
+      {props.notice ? (
+        <div className="notice-bar" data-testid="session-notice">
+          {props.notice}
+        </div>
+      ) : null}
     </header>
   );
 }

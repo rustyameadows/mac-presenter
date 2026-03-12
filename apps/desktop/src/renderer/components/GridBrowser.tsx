@@ -30,6 +30,7 @@ function AssetPreview({ asset }: { asset: AssetRecord }) {
     return (
       <img
         className="grid-preview-image"
+        data-testid={asset.family === "gif" ? "gif-viewport" : "image-viewport"}
         src={window.presenter.getMediaUrl(asset.path)}
         alt={asset.name}
       />
@@ -40,6 +41,7 @@ function AssetPreview({ asset }: { asset: AssetRecord }) {
     return (
       <video
         className="grid-preview-image"
+        data-testid="video-viewport"
         src={window.presenter.getMediaUrl(asset.path)}
         muted
         preload="metadata"
@@ -47,8 +49,16 @@ function AssetPreview({ asset }: { asset: AssetRecord }) {
     );
   }
 
+  if (asset.family === "unsupported") {
+    return (
+      <div className="grid-preview-text" data-testid="unsupported-state">
+        <span>Unsupported preview</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid-preview-text">
+    <div className="grid-preview-text" data-testid="text-grid-preview">
       <span>{asset.extension.replace(".", "").toUpperCase() || "TEXT"}</span>
     </div>
   );
@@ -89,7 +99,7 @@ export function GridBrowser(props: {
   const eligibility = getSelectionEligibility(selectedAssets);
 
   return (
-    <section className="grid-shell">
+    <section className="grid-shell" data-testid="grid-browser">
       <header className="grid-toolbar">
         <div>
           <div className="section-title">Asset Browser</div>
@@ -147,6 +157,7 @@ export function GridBrowser(props: {
               type="button"
               key={asset.id}
               className={`asset-card${selected ? " asset-card-selected" : ""}`}
+              data-testid="asset-card"
               onClick={() => {
                 const next = selected
                   ? props.session.selectedAssetIds.filter((id) => id !== asset.id)

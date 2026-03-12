@@ -1,0 +1,3 @@
+Presenter plain text fixture.
+Second line changes the diff coverage.
+Variant line closes the pair cleanly.

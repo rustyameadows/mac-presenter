@@ -14,6 +14,12 @@
 - `supported`, `previewable`
 - `metadata`
 
+## Asset Load Warning
+- `path`
+- `reason`
+- `detector`
+- warnings are carried with session responses so failed files do not disappear silently
+
 ## Metadata Shapes
 ### Common
 - filename
@@ -82,3 +88,13 @@ Recent entries persist:
 - entry paths
 - source type
 - folder-input flag
+
+## Test Debug Snapshot
+- available only when `PRESENTER_TEST_MODE` is enabled
+- includes:
+  - `session`
+  - `warnings`
+  - `selectedAssetIds`
+  - `selectedAssetNames`
+  - `surface`
+  - `capability`

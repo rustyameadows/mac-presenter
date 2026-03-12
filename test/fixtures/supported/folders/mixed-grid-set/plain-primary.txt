@@ -1,0 +1,3 @@
+Presenter plain text fixture.
+Second line keeps the viewport honest.
+Third line verifies metadata and raw rendering.

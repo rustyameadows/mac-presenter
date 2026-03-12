@@ -76,6 +76,12 @@ export interface AssetRecord {
   metadata: AssetMetadata;
 }
 
+export interface AssetLoadWarning {
+  path: string;
+  stage: "collect" | "read";
+  message: string;
+}
+
 export interface CompareCapability {
   enabled: boolean;
   reason?: string;

@@ -73,6 +73,10 @@ export function registerIpc(input: {
     return response;
   });
 
+  ipcMain.handle("presenter:get-debug-state", () =>
+    input.sessionService.getDebugSnapshot()
+  );
+
   ipcMain.handle("presenter:get-media-url", (_event, assetPath: string) =>
     createMediaUrl(assetPath)
   );

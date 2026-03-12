@@ -68,15 +68,19 @@ Primary users:
 
 ### In scope for v1
 - **Text docs**
-  - `.txt`, `.md`, `.rtf` if feasible
+  - `.txt`, `.md`, `.rtf`
 - **Coding docs**
-  - `.js`, `.ts`, `.tsx`, `.jsx`, `.json`, `.html`, `.css`, `.rb`, `.py`, `.yml`, etc.
+  - `.js`, `.ts`, `.tsx`, `.jsx`, `.json`, `.html`, `.css`, `.rb`, `.py`, `.yml`, `.yaml`, `.xml`, `.toml`, `.ini`, `.sh`, `.c`, `.cc`, `.cpp`, `.go`, `.java`, `.swift`, `.rs`
 - **Images**
-  - `.png`, `.jpg`, `.jpeg`, `.webp`, possibly `.svg` via rasterized preview
+  - `.png`, `.jpg`, `.jpeg`, `.webp`, `.svg`, `.bmp`
 - **Videos**
-  - `.mp4`, `.mov`, `.webm` where supported by Electron/Chromium codecs
+  - `.mp4`, `.mov`, `.webm`, `.m4v` where supported by Electron/Chromium codecs
 - **GIFs**
   - animated and static playback/render support
+
+### Current support contract note
+- The committed fixture corpus in `test/fixtures/supported/` is the exact automated support contract for the shipped app.
+- TIFF metadata can be inspected internally, but `.tif` and `.tiff` are currently treated as unsupported because the Electron viewer does not render them reliably.
 
 ### v1 compatibility rule
 Comparison should be **same-family first**:

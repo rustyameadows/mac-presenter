@@ -1,6 +1,6 @@
 import type { AssetFamily } from "./types";
 
-const textExtensions = new Set([
+export const supportedTextExtensions = [
   ".txt",
   ".md",
   ".rtf",
@@ -26,21 +26,31 @@ const textExtensions = new Set([
   ".java",
   ".swift",
   ".rs"
-]);
+];
 
-const imageExtensions = new Set([
+export const supportedImageExtensions = [
   ".png",
   ".jpg",
   ".jpeg",
   ".webp",
   ".svg",
-  ".bmp",
-  ".tif",
-  ".tiff"
-]);
+  ".bmp"
+];
 
-const gifExtensions = new Set([".gif"]);
-const videoExtensions = new Set([".mp4", ".mov", ".webm", ".m4v"]);
+export const supportedGifExtensions = [".gif"];
+export const supportedVideoExtensions = [".mp4", ".mov", ".webm", ".m4v"];
+
+const textExtensions = new Set(supportedTextExtensions);
+const imageExtensions = new Set(supportedImageExtensions);
+const gifExtensions = new Set(supportedGifExtensions);
+const videoExtensions = new Set(supportedVideoExtensions);
+
+export const supportedAssetExtensionsByFamily = {
+  text: supportedTextExtensions,
+  image: supportedImageExtensions,
+  gif: supportedGifExtensions,
+  video: supportedVideoExtensions
+} as const;
 
 export function getExtension(filePath: string): string {
   const normalized = filePath.replaceAll("\\", "/");

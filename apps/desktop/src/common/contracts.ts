@@ -1,5 +1,7 @@
 import type {
+  AssetLoadWarning,
   AssetRecord,
+  CompareCapability,
   RecentSessionSummary,
   SessionRecord,
   SessionViewState
@@ -13,6 +15,7 @@ export interface BootstrapPayload {
 export interface SessionResponse {
   session: SessionRecord | null;
   recentSessions: RecentSessionSummary[];
+  warnings: AssetLoadWarning[];
   error?: string;
 }
 
@@ -20,6 +23,16 @@ export interface TextAssetPayload {
   path: string;
   content: string;
   encoding: string | null;
+}
+
+export interface PresenterDebugSnapshot {
+  enabled: boolean;
+  session: SessionRecord | null;
+  warnings: AssetLoadWarning[];
+  selectedAssetIds: string[];
+  selectedAssetNames: string[];
+  surface: SessionRecord["surface"] | "empty";
+  capability: CompareCapability;
 }
 
 export interface PresenterApi {
@@ -34,6 +47,7 @@ export interface PresenterApi {
   readTextAsset(path: string): Promise<TextAssetPayload>;
   openRecentSession(id: string): Promise<SessionResponse>;
   reopenCurrentSession(): Promise<SessionResponse>;
+  getDebugState(): Promise<PresenterDebugSnapshot | null>;
   getMediaUrl(assetPath: string): string;
   onSessionChanged(listener: (payload: SessionResponse) => void): () => void;
 }

@@ -1,0 +1,1347 @@
+[
+  {
+    "id": "text-plain-primary",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/plain-primary.txt",
+    "entryPaths": [
+      "text/plain-primary.txt"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "plain-primary.txt"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TXT",
+      "lineCount": 3,
+      "wordCount": 17,
+      "characterCountMin": 116,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "Second line keeps the viewport honest."
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-plain-long",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/plain-long.txt",
+    "entryPaths": [
+      "text/plain-long.txt"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "plain-long.txt"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TXT",
+      "lineCount": 96,
+      "wordCount": 1056,
+      "characterCountMin": 6623,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "line 24 keeps the scroll container busy."
+    },
+    "expectedViewport": {
+      "kind": "text",
+      "scrollable": true,
+      "screenshotName": "plain-text-single.png"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-markdown-primary-md",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/markdown-primary.md",
+    "entryPaths": [
+      "text/markdown-primary.md"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "markdown-primary.md"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "MD",
+      "lineCount": 6,
+      "wordCount": 17,
+      "characterCountMin": 104,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "# Presenter Fixture"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-rich-text-primary-rtf",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/rich-text-primary.rtf",
+    "entryPaths": [
+      "text/rich-text-primary.rtf"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "rich-text-primary.rtf"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "RTF",
+      "lineCount": 1,
+      "wordCount": 13,
+      "characterCountMin": 116,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Menlo;}}\\f0\\fs24 Presenter RTF fixture.\\par Raw control words should stay visible.}"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-javascript-primary-js",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/javascript-primary.js",
+    "entryPaths": [
+      "text/javascript-primary.js"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "javascript-primary.js"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "JS",
+      "lineCount": 4,
+      "wordCount": 9,
+      "characterCountMin": 91,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "export function greet(name) {"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-typescript-primary-ts",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/typescript-primary.ts",
+    "entryPaths": [
+      "text/typescript-primary.ts"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "typescript-primary.ts"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TS",
+      "lineCount": 3,
+      "wordCount": 22,
+      "characterCountMin": 131,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "type Fixture = { title: string; count: number };"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-tsx-primary-tsx",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/tsx-primary.tsx",
+    "entryPaths": [
+      "text/tsx-primary.tsx"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "tsx-primary.tsx"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TSX",
+      "lineCount": 3,
+      "wordCount": 10,
+      "characterCountMin": 104,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "export function FixtureCard() {"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-jsx-primary-jsx",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/jsx-primary.jsx",
+    "entryPaths": [
+      "text/jsx-primary.jsx"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "jsx-primary.jsx"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "JSX",
+      "lineCount": 1,
+      "wordCount": 9,
+      "characterCountMin": 74,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "export const FixtureCard = () => <section>Presenter JSX fixture</section>;"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-json-primary-json",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/json-primary.json",
+    "entryPaths": [
+      "text/json-primary.json"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "json-primary.json"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "JSON",
+      "lineCount": 5,
+      "wordCount": 8,
+      "characterCountMin": 61,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "{"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-html-primary-html",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/html-primary.html",
+    "entryPaths": [
+      "text/html-primary.html"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "html-primary.html"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "HTML",
+      "lineCount": 4,
+      "wordCount": 13,
+      "characterCountMin": 121,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "<section class=\"callout\">"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-css-primary-css",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/css-primary.css",
+    "entryPaths": [
+      "text/css-primary.css"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "css-primary.css"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "CSS",
+      "lineCount": 5,
+      "wordCount": 9,
+      "characterCountMin": 66,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": ".fixture-shell {"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-ruby-primary-rb",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/ruby-primary.rb",
+    "entryPaths": [
+      "text/ruby-primary.rb"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "ruby-primary.rb"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "RB",
+      "lineCount": 5,
+      "wordCount": 8,
+      "characterCountMin": 67,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "class PresenterFixture"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-python-primary-py",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/python-primary.py",
+    "entryPaths": [
+      "text/python-primary.py"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "python-primary.py"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "PY",
+      "lineCount": 3,
+      "wordCount": 10,
+      "characterCountMin": 84,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "def presenter_fixture(name: str) -> str:"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-yml-primary-yml",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/yml-primary.yml",
+    "entryPaths": [
+      "text/yml-primary.yml"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "yml-primary.yml"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "YML",
+      "lineCount": 5,
+      "wordCount": 9,
+      "characterCountMin": 56,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "title: Presenter"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-yaml-primary-yaml",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/yaml-primary.yaml",
+    "entryPaths": [
+      "text/yaml-primary.yaml"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "yaml-primary.yaml"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "YAML",
+      "lineCount": 5,
+      "wordCount": 9,
+      "characterCountMin": 62,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "title: Presenter"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-xml-primary-xml",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/xml-primary.xml",
+    "entryPaths": [
+      "text/xml-primary.xml"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "xml-primary.xml"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "XML",
+      "lineCount": 4,
+      "wordCount": 4,
+      "characterCountMin": 66,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "<fixture>"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-toml-primary-toml",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/toml-primary.toml",
+    "entryPaths": [
+      "text/toml-primary.toml"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "toml-primary.toml"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TOML",
+      "lineCount": 3,
+      "wordCount": 9,
+      "characterCountMin": 46,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "title = \"Presenter\""
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-ini-primary-ini",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/ini-primary.ini",
+    "entryPaths": [
+      "text/ini-primary.ini"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "ini-primary.ini"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "INI",
+      "lineCount": 3,
+      "wordCount": 3,
+      "characterCountMin": 32,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "[presenter]"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-shell-primary-sh",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/shell-primary.sh",
+    "entryPaths": [
+      "text/shell-primary.sh"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "shell-primary.sh"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "SH",
+      "lineCount": 3,
+      "wordCount": 4,
+      "characterCountMin": 36,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "#!/bin/zsh"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-c-primary-c",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/c-primary.c",
+    "entryPaths": [
+      "text/c-primary.c"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "c-primary.c"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "C",
+      "lineCount": 6,
+      "wordCount": 11,
+      "characterCountMin": 81,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "#include <stdio.h>"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-cc-primary-cc",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/cc-primary.cc",
+    "entryPaths": [
+      "text/cc-primary.cc"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "cc-primary.cc"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "CC",
+      "lineCount": 6,
+      "wordCount": 15,
+      "characterCountMin": 99,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "#include <iostream>"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-cpp-primary-cpp",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/cpp-primary.cpp",
+    "entryPaths": [
+      "text/cpp-primary.cpp"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "cpp-primary.cpp"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "CPP",
+      "lineCount": 6,
+      "wordCount": 15,
+      "characterCountMin": 100,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "#include <iostream>"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-go-primary-go",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/go-primary.go",
+    "entryPaths": [
+      "text/go-primary.go"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "go-primary.go"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "GO",
+      "lineCount": 7,
+      "wordCount": 11,
+      "characterCountMin": 81,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "package main"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-java-primary-java",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/java-primary.java",
+    "entryPaths": [
+      "text/java-primary.java"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "java-primary.java"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "JAVA",
+      "lineCount": 5,
+      "wordCount": 14,
+      "characterCountMin": 123,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "class PresenterFixture {"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-swift-primary-swift",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/swift-primary.swift",
+    "entryPaths": [
+      "text/swift-primary.swift"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "swift-primary.swift"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "SWIFT",
+      "lineCount": 4,
+      "wordCount": 9,
+      "characterCountMin": 85,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "struct PresenterFixture {"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-rust-primary-rs",
+    "scenario": "single",
+    "family": "text",
+    "path": "text/rust-primary.rs",
+    "entryPaths": [
+      "text/rust-primary.rs"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "rust-primary.rs"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "RS",
+      "lineCount": 3,
+      "wordCount": 7,
+      "characterCountMin": 53,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "fn main() {"
+    },
+    "expectedViewport": {
+      "kind": "text"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "text-plain-pair",
+    "scenario": "compare",
+    "family": "text",
+    "path": "text/plain-primary.txt",
+    "variantPath": "text/plain-variant.txt",
+    "entryPaths": [
+      "text/plain-primary.txt",
+      "text/plain-variant.txt"
+    ],
+    "expectedSurface": "compare",
+    "expectedSelection": [
+      "plain-primary.txt",
+      "plain-variant.txt"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TXT",
+      "lineCount": 3,
+      "wordCount": 17,
+      "characterCountMin": 116,
+      "encoding": "ascii"
+    },
+    "expectedOutput": {
+      "excerpt": "Second line keeps the viewport honest.",
+      "visibleLabels": [
+        "plain-primary.txt",
+        "plain-variant.txt"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "text",
+      "screenshotName": "text-diff.png"
+    },
+    "compareEligible": true
+  },
+  {
+    "id": "image-png-primary",
+    "scenario": "single",
+    "family": "image",
+    "path": "images/png-primary.png",
+    "entryPaths": [
+      "images/png-primary.png"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "png-primary.png"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "PNG",
+      "width": 160,
+      "height": 96,
+      "format": "png"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "png-primary.png"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "image-jpg-primary",
+    "scenario": "single",
+    "family": "image",
+    "path": "images/jpg-primary.jpg",
+    "entryPaths": [
+      "images/jpg-primary.jpg"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "jpg-primary.jpg"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "JPG",
+      "width": 160,
+      "height": 96,
+      "format": "jpg"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "jpg-primary.jpg"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "image-jpeg-primary",
+    "scenario": "single",
+    "family": "image",
+    "path": "images/jpeg-primary.jpeg",
+    "entryPaths": [
+      "images/jpeg-primary.jpeg"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "jpeg-primary.jpeg"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "JPEG",
+      "width": 160,
+      "height": 96,
+      "format": "jpeg"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "jpeg-primary.jpeg"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "image-webp-primary",
+    "scenario": "single",
+    "family": "image",
+    "path": "images/webp-primary.webp",
+    "entryPaths": [
+      "images/webp-primary.webp"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "webp-primary.webp"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "WEBP",
+      "width": 160,
+      "height": 96,
+      "format": "webp"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "webp-primary.webp"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "image-svg-primary",
+    "scenario": "single",
+    "family": "image",
+    "path": "images/svg-primary.svg",
+    "entryPaths": [
+      "images/svg-primary.svg"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "svg-primary.svg"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "SVG",
+      "width": 160,
+      "height": 96,
+      "format": "svg"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "svg-primary.svg"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "image-bmp-primary",
+    "scenario": "single",
+    "family": "image",
+    "path": "images/bmp-primary.bmp",
+    "entryPaths": [
+      "images/bmp-primary.bmp"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "bmp-primary.bmp"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "BMP",
+      "width": 160,
+      "height": 96,
+      "format": "bmp"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "bmp-primary.bmp"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "image-png-pair",
+    "scenario": "compare",
+    "family": "image",
+    "path": "images/png-primary.png",
+    "variantPath": "images/png-variant.png",
+    "entryPaths": [
+      "images/png-primary.png",
+      "images/png-variant.png"
+    ],
+    "expectedSurface": "compare",
+    "expectedSelection": [
+      "png-primary.png",
+      "png-variant.png"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "PNG",
+      "width": 160,
+      "height": 96,
+      "format": "png"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "png-primary.png",
+        "png-variant.png"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "image",
+      "screenshotName": "image-diff.png"
+    },
+    "compareEligible": true
+  },
+  {
+    "id": "gif-animated-primary",
+    "scenario": "single",
+    "family": "gif",
+    "path": "gifs/gif-animated-primary.gif",
+    "entryPaths": [
+      "gifs/gif-animated-primary.gif"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "gif-animated-primary.gif"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "GIF",
+      "width": 160,
+      "height": 96,
+      "format": "gif"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "gif-animated-primary.gif"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "gif"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "gif-animated-pair",
+    "scenario": "compare",
+    "family": "gif",
+    "path": "gifs/gif-animated-primary.gif",
+    "variantPath": "gifs/gif-animated-variant.gif",
+    "entryPaths": [
+      "gifs/gif-animated-primary.gif",
+      "gifs/gif-animated-variant.gif"
+    ],
+    "expectedSurface": "compare",
+    "expectedSelection": [
+      "gif-animated-primary.gif",
+      "gif-animated-variant.gif"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "GIF",
+      "width": 160,
+      "height": 96,
+      "format": "gif"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "gif-animated-primary.gif",
+        "gif-animated-variant.gif"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "gif"
+    },
+    "compareEligible": true
+  },
+  {
+    "id": "video-mp4-primary",
+    "scenario": "single",
+    "family": "video",
+    "path": "videos/mp4-primary.mp4",
+    "entryPaths": [
+      "videos/mp4-primary.mp4"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "mp4-primary.mp4"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "MP4",
+      "width": 160,
+      "height": 96,
+      "codec": "h264",
+      "containerIncludes": "mp4",
+      "durationSecondsMin": 1
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "mp4-primary.mp4"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "video"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "video-mov-primary",
+    "scenario": "single",
+    "family": "video",
+    "path": "videos/mov-primary.mov",
+    "entryPaths": [
+      "videos/mov-primary.mov"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "mov-primary.mov"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "MOV",
+      "width": 160,
+      "height": 96,
+      "codec": "h264",
+      "containerIncludes": "mov",
+      "durationSecondsMin": 1
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "mov-primary.mov"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "video"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "video-webm-primary",
+    "scenario": "single",
+    "family": "video",
+    "path": "videos/webm-primary.webm",
+    "entryPaths": [
+      "videos/webm-primary.webm"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "webm-primary.webm"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "WEBM",
+      "width": 160,
+      "height": 96,
+      "codec": "vp9",
+      "containerIncludes": "webm",
+      "durationSecondsMin": 1
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "webm-primary.webm"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "video"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "video-m4v-primary",
+    "scenario": "single",
+    "family": "video",
+    "path": "videos/m4v-primary.m4v",
+    "entryPaths": [
+      "videos/m4v-primary.m4v"
+    ],
+    "expectedSurface": "single",
+    "expectedSelection": [
+      "m4v-primary.m4v"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "M4V",
+      "width": 160,
+      "height": 96,
+      "codec": "h264",
+      "containerIncludes": "mp4",
+      "durationSecondsMin": 1
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "m4v-primary.m4v"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "video"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "video-mp4-pair",
+    "scenario": "compare",
+    "family": "video",
+    "path": "videos/mp4-primary.mp4",
+    "variantPath": "videos/mp4-variant.mp4",
+    "entryPaths": [
+      "videos/mp4-primary.mp4",
+      "videos/mp4-variant.mp4"
+    ],
+    "expectedSurface": "compare",
+    "expectedSelection": [
+      "mp4-primary.mp4",
+      "mp4-variant.mp4"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "MP4",
+      "width": 160,
+      "height": 96,
+      "codec": "h264",
+      "containerIncludes": "mp4",
+      "durationSecondsMin": 1
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "mp4-primary.mp4",
+        "mp4-variant.mp4"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "video",
+      "screenshotName": "video-compare.png"
+    },
+    "compareEligible": true
+  },
+  {
+    "id": "unsupported-bin-primary",
+    "scenario": "single",
+    "family": "unsupported",
+    "path": "unsupported/archive-primary.bin",
+    "entryPaths": [
+      "unsupported/archive-primary.bin"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "archive-primary.bin"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "BIN"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "archive-primary.bin",
+        "Unsupported preview"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "unsupported"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "unsupported-tif-primary",
+    "scenario": "single",
+    "family": "unsupported",
+    "path": "images/tif-primary.tif",
+    "entryPaths": [
+      "images/tif-primary.tif"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "tif-primary.tif"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TIF"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "tif-primary.tif",
+        "Unsupported preview"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "unsupported"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "unsupported-tiff-primary",
+    "scenario": "single",
+    "family": "unsupported",
+    "path": "images/tiff-primary.tiff",
+    "entryPaths": [
+      "images/tiff-primary.tiff"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "tiff-primary.tiff"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "TIFF"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "tiff-primary.tiff",
+        "Unsupported preview"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "unsupported"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "unsupported-pdf-primary",
+    "scenario": "single",
+    "family": "unsupported",
+    "path": "unsupported/document-primary.pdf",
+    "entryPaths": [
+      "unsupported/document-primary.pdf"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "document-primary.pdf"
+    ],
+    "expectedMetadata": {
+      "fileTypeLabel": "PDF"
+    },
+    "expectedOutput": {
+      "visibleLabels": [
+        "document-primary.pdf",
+        "Unsupported preview"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "unsupported",
+      "screenshotName": "unsupported-grid.png"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "folder-mixed-grid-set",
+    "scenario": "folder",
+    "family": "mixed",
+    "path": "folders/mixed-grid-set",
+    "entryPaths": [
+      "folders/mixed-grid-set"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "document-primary.pdf",
+      "gif-animated-primary.gif",
+      "mp4-primary.mp4",
+      "plain-primary.txt",
+      "png-primary.png"
+    ],
+    "expectedMetadata": {},
+    "expectedOutput": {
+      "visibleLabels": [
+        "Asset Browser",
+        "plain-primary.txt",
+        "png-primary.png"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "grid",
+      "screenshotName": "mixed-grid.png"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "folder-visual-grid-set",
+    "scenario": "folder",
+    "family": "image",
+    "path": "folders/visual-grid-set",
+    "entryPaths": [
+      "folders/visual-grid-set"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "bmp-primary.bmp",
+      "jpg-primary.jpg",
+      "png-primary.png",
+      "svg-primary.svg",
+      "webp-primary.webp"
+    ],
+    "expectedMetadata": {},
+    "expectedOutput": {
+      "visibleLabels": [
+        "Asset Browser",
+        "png-primary.png",
+        "svg-primary.svg"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "grid"
+    },
+    "compareEligible": false
+  },
+  {
+    "id": "folder-unsupported-grid-set",
+    "scenario": "folder",
+    "family": "unsupported",
+    "path": "folders/unsupported-grid-set",
+    "entryPaths": [
+      "folders/unsupported-grid-set"
+    ],
+    "expectedSurface": "grid",
+    "expectedSelection": [
+      "archive-primary.bin",
+      "document-primary.pdf"
+    ],
+    "expectedMetadata": {},
+    "expectedOutput": {
+      "visibleLabels": [
+        "Asset Browser",
+        "archive-primary.bin",
+        "document-primary.pdf"
+      ]
+    },
+    "expectedViewport": {
+      "kind": "grid"
+    },
+    "compareEligible": false
+  }
+]

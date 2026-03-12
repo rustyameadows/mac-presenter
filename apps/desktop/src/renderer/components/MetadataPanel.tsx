@@ -96,10 +96,10 @@ function MetadataRows({ asset }: { asset: AssetRecord }) {
 
 export function MetadataPanel(props: { assets: AssetRecord[] }) {
   return (
-    <aside className="metadata-panel">
+    <aside className="metadata-panel" data-testid="metadata-panel">
       <div className="section-title">Metadata</div>
       {props.assets.map((asset) => (
-        <section key={asset.id} className="metadata-card">
+        <section key={asset.id} className="metadata-card" data-testid="metadata-card">
           <div className="metadata-card-title">{asset.name}</div>
           <MetadataRows asset={asset} />
         </section>

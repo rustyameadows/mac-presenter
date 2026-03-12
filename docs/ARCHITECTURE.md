@@ -17,10 +17,12 @@
 - Native file/folder dialogs
 - Recursive intake and asset indexing
 - Session persistence in `userData/session-state.json`
+- Structured intake warnings for unreadable or unsupported files
 - Read-only media protocol for local file rendering
 
 ### Preload
 - Typed bridge for intake, session updates, text reads, recents, and view updates
+- Test-only debug snapshot access when `PRESENTER_TEST_MODE` is enabled
 - Renderer remains `contextIsolation` on with no direct Node access
 
 ### Renderer
@@ -49,7 +51,20 @@
 ## Security Boundaries
 - Renderer gets media via `presenter-media://...`
 - Text content is fetched through preload IPC only
+- Debug-state inspection is gated behind `PRESENTER_TEST_MODE` and returns `null` in normal app usage
 - No cloud calls or remote content are required for the app workflow
+
+## Validation Architecture
+- Support fixtures live in `test/fixtures/supported/`
+- `manifest.json` is shared across:
+  - core fixture and routing tests
+  - renderer output tests
+  - built Electron smoke automation
+- Smoke validates:
+  - input acceptance and metadata
+  - routed surface and selection
+  - rendered output and viewport population
+- Representative screenshots are captured into `output/playwright/` during smoke runs
 
 ## Packaging
 - Electron Forge with webpack bundles the main, preload, and renderer
