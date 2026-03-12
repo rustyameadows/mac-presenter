@@ -2,21 +2,34 @@
 
 ## Start Here
 - Product goals: [docs/PRODUCT_BRIEF.md](docs/PRODUCT_BRIEF.md)
-- System architecture:
-- Data model:
+- System architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Data model: [docs/DATA_MODEL.md](docs/DATA_MODEL.md)
 - Integrations:
-- UX:
+- UX: [docs/UX_MENUBAR_AND_COMPARE.md](docs/UX_MENUBAR_AND_COMPARE.md)
 - Roadmap: [docs/ROADMAP.md](docs/ROADMAP.md)
 - Decisions log: [docs/DECISIONS.md](docs/DECISIONS.md)
-- Testing protocol:
+- Testing protocol: [docs/TESTING_PROTOCOL.md](docs/TESTING_PROTOCOL.md)
 
 ## Mission
+Build a local-first macOS menubar app for comparing local assets quickly.
 
 ## Product Boundaries
 - In scope:
+  - menubar-first local intake
+  - same-family compare for images, gifs, videos, and text/code
+  - grid browser for folder or large-set review
+  - image and text/code diffing
 - Out of scope:
+  - cloud sync
+  - collaboration
+  - annotations
+  - audio workflows
 
 ## Engineering Guardrails
+- keep the renderer isolated from direct filesystem access
+- keep compare/session logic reusable outside Electron
+- prefer graceful unsupported states to silent failure
+- keep the tray app resident when windows close
 
 ## Documentation Governance
 - Docs are code. Any behavior/interface/schema change must include doc updates in the same PR.
@@ -25,6 +38,10 @@
 - Use stable terms from this guide in all docs and code comments.
 - 
 ## Canonical Terms
+- Session: one active set of entry paths, assets, selection, and view state
+- Grid Browser: the large-set selection surface
+- Compare Workspace: the single/compare viewer window surface
+- Recent Session: a reopenable summary of a prior intake set
 
 ## Definition of Done for Feature PRs
 - Feature behavior implemented.

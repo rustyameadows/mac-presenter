@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="0 0 900 540">
+  <rect width="900" height="540" fill="#101418" />
+  <rect x="110" y="70" width="680" height="400" rx="48" fill="#38bdf8" />
+  <rect x="170" y="132" width="180" height="280" rx="30" fill="#0f172a" />
+  <text x="388" y="250" font-family="Avenir Next, sans-serif" font-size="84" fill="#082f49">BETA</text>
+  <text x="388" y="332" font-family="Avenir Next, sans-serif" font-size="38" fill="#082f49">Presenter fixture</text>
+</svg>

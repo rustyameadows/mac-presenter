@@ -1,0 +1,49 @@
+{
+  "name": "@presenter/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Menubar-first local asset presenter",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "electron-forge start",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "npm run typecheck && electron-forge package --platform darwin --arch arm64",
+    "smoke:electron": "node ./scripts/smoke-electron.mjs",
+    "package:mac": "electron-forge make --platform darwin --arch arm64"
+  },
+  "dependencies": {
+    "@pierre/diffs": "^1.0.11",
+    "@presenter/core": "file:../../packages/core",
+    "pixelmatch": "^7.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-webpack": "^7.11.1",
+    "@electron-forge/shared-types": "^7.11.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "@vercel/webpack-asset-relocator-loader": "^1.10.0",
+    "css-loader": "^7.1.2",
+    "electron": "^41.0.1",
+    "fork-ts-checker-webpack-plugin": "^9.0.2",
+    "html-webpack-plugin": "^5.6.3",
+    "jsdom": "^26.0.0",
+    "node-loader": "^2.1.0",
+    "playwright-core": "^1.51.1",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.2",
+    "vitest": "^3.1.1",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
+  }
+}
