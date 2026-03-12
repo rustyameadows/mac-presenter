@@ -13,13 +13,19 @@ import {
 import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
+const { parseDiffFromFileMock } = vi.hoisted(() => ({
+  parseDiffFromFileMock: vi.fn(
+    (left: { contents: string }, right: { contents: string }) => ({
+      left,
+      right
+    })
+  )
+}));
+
 vi.mock("@pierre/diffs", () => ({
   getFiletypeFromFileName: (filename: string) =>
     filename.endsWith(".md") ? "markdown" : filename.endsWith(".ts") ? "typescript" : "text",
-  parseDiffFromFile: (left: { contents: string }, right: { contents: string }) => ({
-    left,
-    right
-  })
+  parseDiffFromFile: parseDiffFromFileMock
 }));
 
 vi.mock("@pierre/diffs/react", () => ({
@@ -168,7 +174,8 @@ describe("fixture-driven renderer coverage", () => {
     const left = buildAsset(entry.path, "text", entry.expectedMetadata);
     const right = buildAsset(entry.variantPath ?? "", "text", entry.expectedMetadata);
 
-    render(
+    parseDiffFromFileMock.mockClear();
+    const { rerender } = render(
       <CompareStage
         assets={[left, right]}
         sessionView={{ ...defaultSessionViewState, layout: "diff", textDiffMode: "split" }}
@@ -184,6 +191,21 @@ describe("fixture-driven renderer coverage", () => {
     expect(screen.getByTestId("diff-viewport")).toBeInTheDocument();
     expect(screen.getByTestId("diff-summary")).toHaveTextContent("Text/code diff");
     expect(screen.getByTestId("text-body")).toHaveTextContent("viewport honest");
+
+    rerender(
+      <CompareStage
+        assets={[left, right]}
+        sessionView={{ ...defaultSessionViewState, layout: "diff", textDiffMode: "unified" }}
+        capability={getCompareCapability([left, right])}
+        textContent={{
+          [left.path]: readFileSync(resolveFixturePath(entry.path), "utf8"),
+          [right.path]: readFileSync(resolveFixturePath(entry.variantPath ?? ""), "utf8")
+        }}
+        playbackCommand={null}
+      />
+    );
+
+    expect(parseDiffFromFileMock).toHaveBeenCalledTimes(1);
   });
 
   it("renders HTML fixtures as source text, not executed markup", () => {

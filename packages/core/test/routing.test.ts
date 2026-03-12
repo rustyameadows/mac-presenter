@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { createImageNormalizationPlan } from "../src/diff";
-import { getSelectionEligibility, routeIntake, updateRecentSessions } from "../src/index";
+import {
+  defaultSessionViewState,
+  getSelectionEligibility,
+  routeIntake,
+  updateRecentSessions
+} from "../src/index";
 import type { AssetRecord, SessionRecord } from "../src/types";
 
 function asset(id: string, family: AssetRecord["family"]): AssetRecord {
@@ -42,6 +47,10 @@ function asset(id: string, family: AssetRecord["family"]): AssetRecord {
 }
 
 describe("routeIntake", () => {
+  it("starts sessions with metadata hidden", () => {
+    expect(defaultSessionViewState.metadataOpen).toBe(false);
+  });
+
   it("routes folders to grid", () => {
     const route = routeIntake([asset("one", "image")], true);
     expect(route.surface).toBe("grid");
@@ -91,18 +100,8 @@ describe("recent sessions", () => {
       selectedAssetIds: ["one"],
       surface: "single",
       view: {
-        layout: "single",
-        background: "checker",
-        backgroundColor: "#fff",
-        zoom: 1,
-        fitMode: "fit",
-        diffEnabled: false,
-        syncPan: false,
-        syncPlayback: false,
-        metadataOpen: true,
-        textDiffMode: "split",
-        gridSort: "name",
-        gridFilter: "all"
+        ...defaultSessionViewState,
+        syncPlayback: false
       }
     } satisfies Omit<SessionRecord, "id">;
 

@@ -19,7 +19,7 @@ export const defaultSessionViewState: SessionViewState = {
   diffEnabled: false,
   syncPan: false,
   syncPlayback: true,
-  metadataOpen: true,
+  metadataOpen: false,
   textDiffMode: "split",
   gridSort: "name",
   gridFilter: "all"

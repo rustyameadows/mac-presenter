@@ -16,6 +16,7 @@ import { createImageNormalizationPlan } from "@presenter/core";
 import pixelmatch from "pixelmatch";
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties
@@ -78,11 +79,14 @@ function TextFilePane(props: {
   content: string;
   view: SessionViewState;
 }) {
-  const file: FileContents = {
-    name: props.asset.name,
-    contents: props.content,
-    lang: resolveTextLanguage(props.asset.name)
-  };
+  const file = useMemo<FileContents>(
+    () => ({
+      name: props.asset.name,
+      contents: props.content,
+      lang: resolveTextLanguage(props.asset.name)
+    }),
+    [props.asset.name, props.content]
+  );
 
   return (
     <div className="asset-pane asset-pane-text" data-testid="text-viewport">
@@ -111,17 +115,21 @@ function TextDiffPane(props: {
   rightContent: string;
   view: SessionViewState;
 }) {
-  const diff = parseDiffFromFile(
-    {
-      name: props.left.name,
-      contents: props.leftContent,
-      lang: resolveTextLanguage(props.left.name)
-    },
-    {
-      name: props.right.name,
-      contents: props.rightContent,
-      lang: resolveTextLanguage(props.right.name)
-    }
+  const diff = useMemo(
+    () =>
+      parseDiffFromFile(
+        {
+          name: props.left.name,
+          contents: props.leftContent,
+          lang: resolveTextLanguage(props.left.name)
+        },
+        {
+          name: props.right.name,
+          contents: props.rightContent,
+          lang: resolveTextLanguage(props.right.name)
+        }
+      ),
+    [props.left.name, props.leftContent, props.right.name, props.rightContent]
   );
 
   return (

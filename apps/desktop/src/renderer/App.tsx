@@ -4,11 +4,11 @@ import {
   getSelectionEligibility,
   type AssetLoadWarning,
   type AssetRecord,
-  type SessionRecord
+  type SessionRecord,
+  type SessionViewState
 } from "@presenter/core";
 import {
   startTransition,
-  useDeferredValue,
   useEffect,
   useEffectEvent,
   useState
@@ -63,6 +63,24 @@ function shouldShowBackToGrid(session: SessionRecord | null): boolean {
   return session.hadFolderInput || session.assets.length > getSelectedAssets(session).length;
 }
 
+function applyViewPatch(
+  session: SessionRecord,
+  patch: Partial<SessionViewState>
+): SessionRecord {
+  const layout = patch.layout ?? session.view.layout;
+
+  return {
+    ...session,
+    updatedAt: new Date().toISOString(),
+    view: {
+      ...session.view,
+      ...patch,
+      layout,
+      diffEnabled: layout === "diff"
+    }
+  };
+}
+
 function EmptyState(props: {
   recentTitles: string[];
   onOpenFiles: () => Promise<void>;
@@ -110,8 +128,6 @@ export function App() {
   const [textContent, setTextContent] = useState<Record<string, string>>({});
   const [playbackCommand, setPlaybackCommand] = useState<PlaybackCommand | null>(null);
 
-  const deferredSession = useDeferredValue(session);
-
   const applyResponse = useEffectEvent((response: SessionResponse) => {
     startTransition(() => {
       setSession(response.session);
@@ -121,6 +137,11 @@ export function App() {
       }));
       setNotice(buildNotice(response.error, response.warnings));
     });
+  });
+
+  const updateView = useEffectEvent((patch: Partial<SessionViewState>) => {
+    setSession((current) => (current ? applyViewPatch(current, patch) : current));
+    void window.presenter.updateView(patch).then(applyResponse);
   });
 
   useEffect(() => {
@@ -140,7 +161,7 @@ export function App() {
   }, [applyResponse]);
 
   useEffect(() => {
-    const activeSession = deferredSession;
+    const activeSession = session;
     if (!activeSession) {
       return;
     }
@@ -169,9 +190,9 @@ export function App() {
         return next;
       });
     });
-  }, [deferredSession, textContent]);
+  }, [session, textContent]);
 
-  const selectedAssets = getSelectedAssets(deferredSession);
+  const selectedAssets = getSelectedAssets(session);
   const capability = getCompareCapability(selectedAssets);
   const family = deriveCurrentFamily(selectedAssets);
 
@@ -179,7 +200,7 @@ export function App() {
     return <div className="loading-shell" data-testid="surface-loading">Loading Presenter…</div>;
   }
 
-  if (!deferredSession) {
+  if (!session) {
     return (
       <EmptyState
         recentTitles={bootstrap.recentSessions.map((item) => item.title)}
@@ -190,55 +211,29 @@ export function App() {
   }
 
   return (
-    <div className="app-shell" data-testid={`surface-${deferredSession.surface}`}>
+    <div className="app-shell" data-testid={`surface-${session.surface}`}>
       <TopRail
         family={family}
         assetCount={selectedAssets.length}
         capability={capability}
-        view={deferredSession.view}
-        showBackToGrid={shouldShowBackToGrid(deferredSession)}
+        view={session.view}
+        showBackToGrid={shouldShowBackToGrid(session)}
         notice={notice}
-        onLayoutChange={(layout) =>
-          void window.presenter.updateView({ layout }).then(applyResponse)
-        }
+        onLayoutChange={(layout) => updateView({ layout })}
         onToggleDiff={() => {
           const nextLayout =
-            deferredSession.view.layout === "diff"
+            session.view.layout === "diff"
               ? capability.layouts.find((layout) => layout !== "diff") ?? "side-by-side"
               : "diff";
-          void window.presenter
-            .updateView({ layout: nextLayout, diffEnabled: nextLayout === "diff" })
-            .then(applyResponse);
+          updateView({ layout: nextLayout, diffEnabled: nextLayout === "diff" });
         }}
-        onBackgroundChange={(background, backgroundColor) =>
-          void window.presenter
-            .updateView({ background, backgroundColor })
-            .then(applyResponse)
-        }
-        onZoomChange={(zoom) =>
-          void window.presenter.updateView({ zoom }).then(applyResponse)
-        }
-        onFitModeChange={(fitMode) =>
-          void window.presenter.updateView({ fitMode }).then(applyResponse)
-        }
-        onMetadataToggle={() =>
-          void window.presenter
-            .updateView({ metadataOpen: !deferredSession.view.metadataOpen })
-            .then(applyResponse)
-        }
-        onTextDiffModeChange={(textDiffMode) =>
-          void window.presenter.updateView({ textDiffMode }).then(applyResponse)
-        }
-        onSyncPanChange={() =>
-          void window.presenter
-            .updateView({ syncPan: !deferredSession.view.syncPan })
-            .then(applyResponse)
-        }
-        onSyncPlaybackChange={() =>
-          void window.presenter
-            .updateView({ syncPlayback: !deferredSession.view.syncPlayback })
-            .then(applyResponse)
-        }
+        onBackgroundChange={(background, backgroundColor) => updateView({ background, backgroundColor })}
+        onZoomChange={(zoom) => updateView({ zoom })}
+        onFitModeChange={(fitMode) => updateView({ fitMode })}
+        onMetadataToggle={() => updateView({ metadataOpen: !session.view.metadataOpen })}
+        onTextDiffModeChange={(textDiffMode) => updateView({ textDiffMode })}
+        onSyncPanChange={() => updateView({ syncPan: !session.view.syncPan })}
+        onSyncPlaybackChange={() => updateView({ syncPlayback: !session.view.syncPlayback })}
         onBackToGrid={() => void window.presenter.backToGrid().then(applyResponse)}
         onOpenFiles={() => void window.presenter.openFilesDialog().then(applyResponse)}
         onOpenFolder={() => void window.presenter.openFolderDialog().then(applyResponse)}
@@ -246,15 +241,13 @@ export function App() {
       />
 
       <div className="content-shell">
-        {deferredSession.surface === "grid" ? (
+        {session.surface === "grid" ? (
           <GridBrowser
-            session={deferredSession}
+            session={session}
             onSelect={(assetIds) =>
               void window.presenter.setSelection(assetIds).then(applyResponse)
             }
-            onViewChange={(patch) =>
-              void window.presenter.updateView(patch).then(applyResponse)
-            }
+            onViewChange={(patch) => updateView(patch)}
             onCompare={(assetIds) =>
               void window.presenter.openSelection(assetIds).then(applyResponse)
             }
@@ -267,23 +260,23 @@ export function App() {
           <div className="workspace-shell" data-testid="workspace-shell">
             <CompareStage
               assets={selectedAssets}
-              sessionView={deferredSession.view}
+              sessionView={session.view}
               capability={capability}
               textContent={textContent}
               playbackCommand={playbackCommand}
             />
-            {deferredSession.view.metadataOpen ? (
+            {session.view.metadataOpen ? (
               <MetadataPanel assets={selectedAssets} />
             ) : null}
           </div>
         )}
       </div>
 
-      {deferredSession.surface === "grid" ? (
+      {session.surface === "grid" ? (
         <footer className="grid-footer">
           {(() => {
-            const selection = deferredSession.assets.filter((asset) =>
-              deferredSession.selectedAssetIds.includes(asset.id)
+            const selection = session.assets.filter((asset) =>
+              session.selectedAssetIds.includes(asset.id)
             );
             const eligibility = getSelectionEligibility(selection);
             return (
@@ -308,7 +301,7 @@ export function App() {
                     disabled={!eligibility.enabled}
                     onClick={() =>
                       void window.presenter
-                        .openSelection(deferredSession.selectedAssetIds)
+                        .openSelection(session.selectedAssetIds)
                         .then(applyResponse)
                     }
                   >

@@ -163,6 +163,10 @@ function assertMetadata(entry, debug) {
 }
 
 async function assertMetadataPanel(window, entry) {
+  const metadataPanelsBeforeToggle = await window.locator('[data-testid="metadata-panel"]').count();
+  assert.equal(metadataPanelsBeforeToggle, 0, `${entry.id} should start with metadata hidden`);
+
+  await window.getByRole("button", { name: "Show Metadata" }).click();
   await window.waitForSelector('[data-testid="metadata-panel"]');
   const text = await window.getByTestId("metadata-panel").innerText();
 
