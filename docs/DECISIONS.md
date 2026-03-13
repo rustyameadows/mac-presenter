@@ -2,6 +2,11 @@
 
 ## 2026-03-13
 
+### Session share package export
+- Added a persistent top-rail `Share` CTA that creates a local zip export for the active Session.
+- Export payload includes original assets plus a lightweight static `index.html` viewer so handoffs are browsable via local file URL (`file://`).
+- Static viewer keeps Presenter-adjacent visual affordances (background modes and single/split layout) while intentionally omitting app-only interactive tooling such as diffing.
+
 ### Packaged file-open integration
 - The packaged macOS app now declares the same supported extensions as the app support contract so Finder can offer `Open With > Presenter`.
 - macOS `open-file` events are batched into one intake load so multi-file Finder selections reopen as one Presenter session instead of one window update per file.

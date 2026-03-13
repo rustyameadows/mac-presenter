@@ -136,6 +136,7 @@ export function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const [textContent, setTextContent] = useState<Record<string, string>>({});
   const [playbackCommand, setPlaybackCommand] = useState<PlaybackCommand | null>(null);
+  const [downloadBusy, setDownloadBusy] = useState(false);
 
   const applyResponse = useEffectEvent((response: SessionResponse) => {
     startTransition(() => {
@@ -315,6 +316,23 @@ export function App() {
           void window.presenter.openSelection(session.selectedAssetIds).then(applyResponse);
         }}
         onBackToGrid={() => void window.presenter.backToGrid().then(applyResponse)}
+
+        onDownloadPackage={() => {
+          setDownloadBusy(true);
+          void window.presenter.downloadPackage().then((response) => {
+            if (response.error) {
+              setNotice(response.error);
+              return;
+            }
+            if (response.canceled) {
+              return;
+            }
+            setNotice(response.outputPath ? `Share package saved to ${response.outputPath}.` : "Share package created.");
+          }).finally(() => {
+            setDownloadBusy(false);
+          });
+        }}
+        downloadBusy={downloadBusy}
         onPlaybackCommand={(command) => setPlaybackCommand(command)}
       />
 

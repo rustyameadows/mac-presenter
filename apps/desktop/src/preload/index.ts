@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 
 import type {
   BootstrapPayload,
+  ExportPackageResponse,
   PresenterDebugSnapshot,
   PresenterApi,
   SessionResponse,
@@ -27,6 +28,8 @@ const api: PresenterApi = {
     ipcRenderer.invoke("presenter:update-view", patch) as Promise<SessionResponse>,
   readTextAsset: (assetPath) =>
     ipcRenderer.invoke("presenter:read-text-asset", assetPath) as Promise<TextAssetPayload>,
+  downloadPackage: () =>
+    ipcRenderer.invoke("presenter:download-package") as Promise<ExportPackageResponse>,
   openRecentSession: (id) =>
     ipcRenderer.invoke("presenter:open-recent", id) as Promise<SessionResponse>,
   reopenCurrentSession: () =>

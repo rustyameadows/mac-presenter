@@ -61,6 +61,10 @@ export function registerIpc(input: {
     input.sessionService.readTextAsset(assetPath)
   );
 
+  ipcMain.handle("presenter:download-package", async () =>
+    input.sessionService.downloadPackage(input.windowManager.getWindow())
+  );
+
   ipcMain.handle("presenter:open-recent", async (_event, id: string) => {
     const response = await input.sessionService.openRecentSession(id);
     input.broadcast(response);

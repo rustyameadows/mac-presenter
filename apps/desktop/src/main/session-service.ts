@@ -1,3 +1,4 @@
+import type { BrowserWindow } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
@@ -17,10 +18,12 @@ import {
 
 import type {
   BootstrapPayload,
+  ExportPackageResponse,
   PresenterDebugSnapshot,
   SessionResponse
 } from "../common/contracts";
 import { SessionStore } from "./session-store";
+import { exportSessionZip } from "./export-package";
 
 function uniquePaths(pathsToFilter: string[]): string[] {
   return [...new Set(pathsToFilter.map((inputPath) => path.resolve(inputPath)))];
@@ -245,6 +248,29 @@ export class SessionService {
       path: assetPath,
       ...(await readTextAssetContent(assetPath))
     };
+  }
+
+
+  async downloadPackage(window: BrowserWindow | null): Promise<ExportPackageResponse> {
+    const current = this.store.getCurrentSession();
+    if (!current) {
+      return {
+        canceled: false,
+        error: "Load a session before creating a download package."
+      };
+    }
+
+    try {
+      return await exportSessionZip({
+        window,
+        session: current
+      });
+    } catch (error) {
+      return {
+        canceled: false,
+        error: errorMessage(error)
+      };
+    }
   }
 
   async openRecentSession(id: string): Promise<SessionResponse> {
