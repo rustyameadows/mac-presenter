@@ -4,6 +4,7 @@ import {
   type RecentSessionSummary,
   type SessionRecord
 } from "@presenter/core";
+import { useEffect, useMemo } from "react";
 
 function renderMetaSummary(asset: AssetRecord): string {
   if (asset.metadata.family === "text") {
@@ -64,6 +65,18 @@ function AssetPreview({ asset }: { asset: AssetRecord }) {
   );
 }
 
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
+    return true;
+  }
+
+  return target.isContentEditable;
+}
+
 export function GridBrowser(props: {
   session: SessionRecord;
   recentSessions: RecentSessionSummary[];
@@ -93,11 +106,57 @@ export function GridBrowser(props: {
           return left.name.localeCompare(right.name);
       }
     });
+  const visibleAssetIds = useMemo(
+    () => filteredAssets.map((asset) => asset.id),
+    [filteredAssets]
+  );
 
   const selectedAssets = props.session.assets.filter((asset) =>
     props.session.selectedAssetIds.includes(asset.id)
   );
   const eligibility = getSelectionEligibility(selectedAssets);
+  const visibleSelectedCount = visibleAssetIds.filter((id) =>
+    props.session.selectedAssetIds.includes(id)
+  ).length;
+  const allVisibleSelected =
+    visibleAssetIds.length > 0 && visibleSelectedCount === visibleAssetIds.length;
+  const hasVisibleSelection = visibleSelectedCount > 0;
+
+  const selectVisible = () => {
+    props.onSelect([
+      ...new Set([...props.session.selectedAssetIds, ...visibleAssetIds])
+    ]);
+  };
+
+  const deselectVisible = () => {
+    props.onSelect(
+      props.session.selectedAssetIds.filter((id) => !visibleAssetIds.includes(id))
+    );
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        !event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.key.toLowerCase() !== "a" ||
+        isEditableTarget(event.target)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      if (event.shiftKey) {
+        deselectVisible();
+      } else {
+        selectVisible();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [deselectVisible, selectVisible]);
 
   return (
     <section className="grid-shell" data-testid="grid-browser">
@@ -111,6 +170,7 @@ export function GridBrowser(props: {
         </div>
         <div className="toolbar-controls">
           <select
+            aria-label="Grid Filter"
             value={props.session.view.gridFilter}
             onChange={(event) =>
               props.onViewChange({
@@ -126,6 +186,7 @@ export function GridBrowser(props: {
             <option value="unsupported">Unsupported</option>
           </select>
           <select
+            aria-label="Grid Sort"
             value={props.session.view.gridSort}
             onChange={(event) =>
               props.onViewChange({
@@ -145,6 +206,24 @@ export function GridBrowser(props: {
             onClick={props.onOpenFiles}
           >
             Add Files
+          </button>
+          <button
+            type="button"
+            className="button"
+            data-testid="grid-select-all"
+            disabled={visibleAssetIds.length === 0 || allVisibleSelected}
+            onClick={selectVisible}
+          >
+            Select All
+          </button>
+          <button
+            type="button"
+            className="button"
+            data-testid="grid-deselect-all"
+            disabled={!hasVisibleSelection}
+            onClick={deselectVisible}
+          >
+            Deselect All
           </button>
           <button
             type="button"

@@ -36,6 +36,8 @@
 - compare rendering for text diff, image compare, gif compare, and video compare
 - explicit 3-up and 4-up viewer rendering
 - metadata overlay content without workspace reflow
+- grid bulk-selection controls and mac shortcuts against the visible filtered set
+- centered visual zoom behavior with measurable overflow after `2x` / `4x`
 - unsupported-state rendering
 - long-document viewport behavior and non-empty body output
 
@@ -71,10 +73,14 @@
 - metadata must remain visible separately from the main content body
 - metadata overlays must not resize the compare stage
 - the smoke suite must include at least one plain `.txt` single-view scenario
+- grid-routed sessions must start with zero selected assets
+- grid, text/diff, and zoomed visual panes must scroll inside their own content regions rather than relying on page scroll
 
 ## Manual QA
 - drag two image files onto the menubar icon and confirm direct 2-up open
 - drag a folder and confirm grid browser routing
+- in grid view, confirm `Select All`, `Deselect All`, `Cmd+A`, and `Cmd+Shift+A`
+- in a zoomed image compare, confirm `2x` / `4x` preserve the prior viewport center and allow scrolling
 - verify closing the presenter window hides it without quitting the tray app
 - verify the menubar app has no Dock icon
 

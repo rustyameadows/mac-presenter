@@ -1228,9 +1228,7 @@
       "unsupported/archive-primary.bin"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "archive-primary.bin"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {
       "fileTypeLabel": "BIN"
     },
@@ -1254,9 +1252,7 @@
       "images/tif-primary.tif"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "tif-primary.tif"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {
       "fileTypeLabel": "TIF"
     },
@@ -1280,9 +1276,7 @@
       "images/tiff-primary.tiff"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "tiff-primary.tiff"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {
       "fileTypeLabel": "TIFF"
     },
@@ -1306,9 +1300,7 @@
       "unsupported/document-primary.pdf"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "document-primary.pdf"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {
       "fileTypeLabel": "PDF"
     },
@@ -1333,13 +1325,7 @@
       "folders/mixed-grid-set"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "document-primary.pdf",
-      "gif-animated-primary.gif",
-      "mp4-primary.mp4",
-      "plain-primary.txt",
-      "png-primary.png"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {},
     "expectedOutput": {
       "visibleLabels": [
@@ -1363,13 +1349,7 @@
       "folders/visual-grid-set"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "bmp-primary.bmp",
-      "jpg-primary.jpg",
-      "png-primary.png",
-      "svg-primary.svg",
-      "webp-primary.webp"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {},
     "expectedOutput": {
       "visibleLabels": [
@@ -1392,10 +1372,7 @@
       "folders/unsupported-grid-set"
     ],
     "expectedSurface": "grid",
-    "expectedSelection": [
-      "archive-primary.bin",
-      "document-primary.pdf"
-    ],
+    "expectedSelection": [],
     "expectedMetadata": {},
     "expectedOutput": {
       "visibleLabels": [

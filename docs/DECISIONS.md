@@ -35,3 +35,12 @@
 - The viewer, grid browser, and empty state now use a shared flat canvas language instead of pane cards and layered chrome.
 - White is the default session background, while checker, black, white, and custom remain available as persisted options.
 - Metadata now opens as an overlay sheet so compare layouts never reflow when detailed info is shown.
+
+### Grid-first refinement behavior
+- Sessions that route to the grid browser now start with no selected assets instead of auto-selecting the full intake set.
+- Bulk selection is explicit through `Select All`, `Deselect All`, `Cmd+A`, and `Cmd+Shift+A`, scoped to the currently visible filtered assets.
+
+### Measured visual zoom
+- Visual panes use a real scrollable media canvas instead of transform-only scaling.
+- Zoom steps preserve the current viewport center, while fit mode still centers content that fully fits.
+- Grid, text, diff, and zoomed visual surfaces each own their own inner scrolling instead of relying on page scroll.

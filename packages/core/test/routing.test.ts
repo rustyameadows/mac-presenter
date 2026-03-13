@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { createImageNormalizationPlan } from "../src/diff";
 import {
+  buildSessionRecord,
   defaultSessionViewState,
   getSelectionEligibility,
   routeIntake,
@@ -66,6 +67,32 @@ describe("routeIntake", () => {
   it("routes mixed assets to grid", () => {
     const route = routeIntake([asset("one", "image"), asset("two", "text")], false);
     expect(route.surface).toBe("grid");
+  });
+
+  it("starts grid-routed sessions with no preselection", () => {
+    const session = buildSessionRecord({
+      title: "Folder Intake",
+      assets: [asset("one", "image"), asset("two", "image"), asset("three", "image")],
+      entryPaths: ["/tmp/folder"],
+      hadFolderInput: true,
+      source: "folders"
+    });
+
+    expect(session.surface).toBe("grid");
+    expect(session.selectedAssetIds).toEqual([]);
+  });
+
+  it("keeps direct single/compare sessions selected on intake", () => {
+    const session = buildSessionRecord({
+      title: "Direct Intake",
+      assets: [asset("one", "image"), asset("two", "image")],
+      entryPaths: ["/tmp/one.png", "/tmp/two.png"],
+      hadFolderInput: false,
+      source: "files"
+    });
+
+    expect(session.surface).toBe("compare");
+    expect(session.selectedAssetIds).toEqual(["one", "two"]);
   });
 });
 

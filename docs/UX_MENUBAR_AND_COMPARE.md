@@ -15,6 +15,9 @@ Used when:
 Features:
 - flat asset wall with thin dividers
 - multi-select
+- initial folder/grid intake starts with no selected assets
+- `Select All` and `Deselect All` actions operate on the currently visible filtered set
+- `Cmd+A` selects all visible filtered assets and `Cmd+Shift+A` clears them
 - sort and filter controls
 - compare button with eligibility feedback in the header
 - recent sessions list below the asset wall
@@ -29,6 +32,7 @@ Presentation model:
 - the default background is white
 - viewer layouts use one continuous field with thin dividers instead of pane cards
 - asset names appear as subtle overlay labels inside each region
+- visual panes own their own scroll behavior once zoomed content exceeds the viewport
 
 Layout modes:
 - single
@@ -56,6 +60,7 @@ Visual rules:
 - the rail sits directly on the active canvas color
 - controls use compact monochrome states with contrast based on the current background
 - session notices stay lightweight and do not create heavy chrome
+- zoom changes preserve the current visual viewport center instead of snapping back to the origin
 
 ## Family-Specific Behavior
 ### Images
@@ -75,6 +80,7 @@ Visual rules:
 - single, side-by-side, top-bottom, 3-up, 4-up
 - diff via `@pierre/diffs`
 - syntax-aware rendering when language detection is available
+- wrapped content with scroll contained inside the text region instead of the page
 
 ## Metadata Presentation
 - asset labels stay with each viewport

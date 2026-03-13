@@ -332,6 +332,28 @@ async function assertGridViewport(window, entry) {
   await assertVisibleLabels(window, entry);
 }
 
+async function assertGridCanScroll(window) {
+  const before = await window.evaluate(() => {
+    const grid = document.querySelector('[data-testid="grid-browser"]');
+    if (!(grid instanceof HTMLElement)) {
+      return null;
+    }
+
+    const maxScrollTop = Math.max(0, grid.scrollHeight - grid.clientHeight);
+    grid.scrollTop = Math.min(160, maxScrollTop);
+
+    return {
+      scrollHeight: grid.scrollHeight,
+      clientHeight: grid.clientHeight,
+      scrollTop: grid.scrollTop
+    };
+  });
+
+  assert(before, "Missing grid browser");
+  assert.ok(before.scrollHeight > before.clientHeight, "Grid surface did not expose vertical overflow");
+  assert.ok(before.scrollTop > 0, "Grid surface did not scroll");
+}
+
 async function assertViewport(window, entry) {
   switch (entry.expectedViewport.kind) {
     case "text":
@@ -446,20 +468,121 @@ async function assertCenteredFitImage(window) {
   assert.ok(geometry.verticalDelta <= 20, "Single image is not vertically centered");
 }
 
-async function assertZoomAnchorsAtOrigin(window) {
+async function assertZoomPreservesViewportCenter(window) {
+  const readFrameCenter = () =>
+    window.evaluate(() => {
+      const viewport = document.querySelector('[data-testid="asset-viewport"]');
+      const frame = document.querySelector('[data-testid="visual-media-frame"]');
+      if (!(viewport instanceof HTMLElement) || !(frame instanceof HTMLElement)) {
+        return null;
+      }
+
+      const viewportRect = viewport.getBoundingClientRect();
+      const frameRect = frame.getBoundingClientRect();
+      const frameContentLeft =
+        viewport.scrollLeft + (frameRect.left - viewportRect.left);
+      const frameContentTop =
+        viewport.scrollTop + (frameRect.top - viewportRect.top);
+
+      return {
+        centerX:
+          frameRect.width > 0
+            ? (viewport.scrollLeft + viewport.clientWidth / 2 - frameContentLeft) /
+              frameRect.width
+            : 0.5,
+        centerY:
+          frameRect.height > 0
+            ? (viewport.scrollTop + viewport.clientHeight / 2 - frameContentTop) /
+              frameRect.height
+            : 0.5
+      };
+    });
+
   await window.getByRole("button", { name: "2x" }).click();
   await window.waitForFunction(() => {
-    const shell = document.querySelector('[data-testid="visual-media-shell"]');
     const viewport = document.querySelector('[data-testid="asset-viewport"]');
-
     return (
-      shell instanceof HTMLElement &&
       viewport instanceof HTMLElement &&
-      shell.classList.contains("media-shell-origin") &&
-      viewport.scrollLeft === 0 &&
-      viewport.scrollTop === 0
+      viewport.scrollWidth > viewport.clientWidth &&
+      viewport.scrollHeight > viewport.clientHeight
     );
   });
+
+  const centered = await readFrameCenter();
+  assert(centered, "Missing zoomed image geometry");
+  assert.ok(Math.abs(centered.centerX - 0.5) <= 0.03, "2x zoom drifted off the image center horizontally");
+  assert.ok(Math.abs(centered.centerY - 0.5) <= 0.03, "2x zoom drifted off the image center vertically");
+
+  const before = await window.evaluate(() => {
+    const viewport = document.querySelector('[data-testid="asset-viewport"]');
+    const frame = document.querySelector('[data-testid="visual-media-frame"]');
+    if (!(viewport instanceof HTMLElement) || !(frame instanceof HTMLElement)) {
+      return null;
+    }
+
+    viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) * 0.25;
+    viewport.scrollTop = (viewport.scrollHeight - viewport.clientHeight) * 0.2;
+
+    const viewportRect = viewport.getBoundingClientRect();
+    const frameRect = frame.getBoundingClientRect();
+    const frameContentLeft =
+      viewport.scrollLeft + (frameRect.left - viewportRect.left);
+    const frameContentTop =
+      viewport.scrollTop + (frameRect.top - viewportRect.top);
+
+    return {
+      centerX:
+        frameRect.width > 0
+          ? (viewport.scrollLeft + viewport.clientWidth / 2 - frameContentLeft) /
+            frameRect.width
+          : 0.5,
+      centerY:
+        frameRect.height > 0
+          ? (viewport.scrollTop + viewport.clientHeight / 2 - frameContentTop) /
+            frameRect.height
+          : 0.5
+    };
+  });
+
+  assert(before, "Missing zoom frame center before 4x");
+
+  await window.getByRole("button", { name: "4x" }).click();
+  await window.waitForFunction(() => {
+    const viewport = document.querySelector('[data-testid="asset-viewport"]');
+    return viewport instanceof HTMLElement && viewport.scrollWidth > viewport.clientWidth;
+  });
+
+  const after = await window.evaluate(() => {
+    const viewport = document.querySelector('[data-testid="asset-viewport"]');
+    const frame = document.querySelector('[data-testid="visual-media-frame"]');
+    if (!(viewport instanceof HTMLElement) || !(frame instanceof HTMLElement)) {
+      return null;
+    }
+
+    const viewportRect = viewport.getBoundingClientRect();
+    const frameRect = frame.getBoundingClientRect();
+    const frameContentLeft =
+      viewport.scrollLeft + (frameRect.left - viewportRect.left);
+    const frameContentTop =
+      viewport.scrollTop + (frameRect.top - viewportRect.top);
+
+    return {
+      centerX:
+        frameRect.width > 0
+          ? (viewport.scrollLeft + viewport.clientWidth / 2 - frameContentLeft) /
+            frameRect.width
+          : 0.5,
+      centerY:
+        frameRect.height > 0
+          ? (viewport.scrollTop + viewport.clientHeight / 2 - frameContentTop) /
+            frameRect.height
+          : 0.5
+    };
+  });
+
+  assert(after, "Missing zoom frame center after 4x");
+  assert.ok(Math.abs(after.centerX - before.centerX) <= 0.03, "4x zoom reset horizontal viewport center");
+  assert.ok(Math.abs(after.centerY - before.centerY) <= 0.03, "4x zoom reset vertical viewport center");
 }
 
 async function assertWrappedTextDiff(window) {
@@ -487,6 +610,38 @@ async function assertWrappedTextDiff(window) {
     wrapMetrics.viewportScrollWidth <= wrapMetrics.viewportClientWidth + 4,
     "Text diff viewport still overflows horizontally instead of wrapping"
   );
+}
+
+async function assertGridSelectionControls(window, entry) {
+  const debug = await openScenario(window, entry);
+  assert.equal(debug.selectedAssetIds.length, 0, "Folder grid should start deselected");
+  assert.equal(
+    await window.getByRole("button", { name: "Compare Selected" }).isDisabled(),
+    true,
+    "Compare should stay disabled with no grid selection"
+  );
+
+  await window.getByRole("combobox", { name: "Grid Filter" }).selectOption("image");
+  await window.getByTestId("grid-select-all").click();
+  await window.waitForFunction(async () => {
+    const state = await window.presenter.getDebugState();
+    return JSON.stringify(state?.selectedAssetNames ?? []) === JSON.stringify(["png-primary.png"]);
+  });
+
+  await window.keyboard.press("Meta+Shift+A");
+  await window.waitForFunction(async () => {
+    const state = await window.presenter.getDebugState();
+    return (state?.selectedAssetIds ?? []).length === 0;
+  });
+
+  await window.getByTestId("grid-deselect-all").waitFor();
+  await window.keyboard.press("Meta+A");
+  await window.waitForFunction(async () => {
+    const state = await window.presenter.getDebugState();
+    return JSON.stringify(state?.selectedAssetNames ?? []) === JSON.stringify(["png-primary.png"]);
+  });
+
+  await assertGridCanScroll(window);
 }
 
 async function assertSurface(window, entry, debug) {
@@ -573,6 +728,7 @@ async function run() {
     }
 
     const toolbarScenario = manifest.find((entry) => entry.id === "text-plain-pair");
+    const gridSelectionScenario = manifest.find((entry) => entry.id === "folder-mixed-grid-set");
     const imageScenario = manifest.find((entry) => entry.id === "image-png-primary");
 
     if (toolbarScenario) {
@@ -600,13 +756,17 @@ async function run() {
     await window.waitForSelector('[data-testid="diff-viewport"]');
     await assertWrappedTextDiff(window);
 
+    if (gridSelectionScenario) {
+      await assertGridSelectionControls(window, gridSelectionScenario);
+    }
+
     if (imageScenario) {
       await openScenario(window, imageScenario);
       await assertCenteredFitImage(window);
       await window.screenshot({
         path: path.join(outputDir, "single-image-fit.png")
       });
-      await assertZoomAnchorsAtOrigin(window);
+      await assertZoomPreservesViewportCenter(window);
       await window.screenshot({
         path: path.join(outputDir, "single-image-origin.png")
       });

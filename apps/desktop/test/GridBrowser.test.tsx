@@ -59,7 +59,7 @@ const session: SessionRecord = {
       }
     }
   ],
-  selectedAssetIds: ["one", "two"],
+  selectedAssetIds: [],
   surface: "grid",
   view: {
     layout: "grid-3",
@@ -78,11 +78,29 @@ const session: SessionRecord = {
 };
 
 describe("GridBrowser", () => {
+  it("starts with compare disabled when nothing is selected", () => {
+    render(
+      <GridBrowser
+        session={session}
+        recentSessions={[]}
+        onSelect={() => {}}
+        onViewChange={() => {}}
+        onCompare={() => {}}
+        onOpenFiles={() => {}}
+        onOpenRecent={() => {}}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Compare Selected" })).toBeDisabled();
+    expect(screen.getByTestId("grid-select-all")).toBeEnabled();
+    expect(screen.getByTestId("grid-deselect-all")).toBeDisabled();
+  });
+
   it("enables compare for a valid same-family selection", () => {
     const compareCalls: string[][] = [];
     render(
       <GridBrowser
-        session={session}
+        session={{ ...session, selectedAssetIds: ["one", "two"] }}
         recentSessions={[]}
         onSelect={() => {}}
         onViewChange={() => {}}
@@ -96,5 +114,44 @@ describe("GridBrowser", () => {
     expect(compareButton).toBeEnabled();
     fireEvent.click(compareButton);
     expect(compareCalls[0]).toEqual(["one", "two"]);
+  });
+
+  it("selects and deselects the visible grid set with buttons and shortcuts", () => {
+    const selectCalls: string[][] = [];
+    const { rerender } = render(
+      <GridBrowser
+        session={session}
+        recentSessions={[]}
+        onSelect={(assetIds) => selectCalls.push(assetIds)}
+        onViewChange={() => {}}
+        onCompare={() => {}}
+        onOpenFiles={() => {}}
+        onOpenRecent={() => {}}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("grid-select-all"));
+    expect(selectCalls.at(-1)).toEqual(["one", "two"]);
+
+    fireEvent.keyDown(window, { key: "a", metaKey: true });
+    expect(selectCalls.at(-1)).toEqual(["one", "two"]);
+
+    rerender(
+      <GridBrowser
+        session={{ ...session, selectedAssetIds: ["one", "two"] }}
+        recentSessions={[]}
+        onSelect={(assetIds) => selectCalls.push(assetIds)}
+        onViewChange={() => {}}
+        onCompare={() => {}}
+        onOpenFiles={() => {}}
+        onOpenRecent={() => {}}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("grid-deselect-all"));
+    expect(selectCalls.at(-1)).toEqual([]);
+
+    fireEvent.keyDown(window, { key: "a", metaKey: true, shiftKey: true });
+    expect(selectCalls.at(-1)).toEqual([]);
   });
 });

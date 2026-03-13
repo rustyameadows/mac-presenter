@@ -657,7 +657,7 @@ manifest.push({
   path: "unsupported/archive-primary.bin",
   entryPaths: ["unsupported/archive-primary.bin"],
   expectedSurface: "grid",
-  expectedSelection: ["archive-primary.bin"],
+  expectedSelection: [],
   expectedMetadata: {
     fileTypeLabel: "BIN"
   },
@@ -677,7 +677,7 @@ manifest.push({
   path: "images/tif-primary.tif",
   entryPaths: ["images/tif-primary.tif"],
   expectedSurface: "grid",
-  expectedSelection: ["tif-primary.tif"],
+  expectedSelection: [],
   expectedMetadata: {
     fileTypeLabel: "TIF"
   },
@@ -697,7 +697,7 @@ manifest.push({
   path: "images/tiff-primary.tiff",
   entryPaths: ["images/tiff-primary.tiff"],
   expectedSurface: "grid",
-  expectedSelection: ["tiff-primary.tiff"],
+  expectedSelection: [],
   expectedMetadata: {
     fileTypeLabel: "TIFF"
   },
@@ -717,7 +717,7 @@ manifest.push({
   path: "unsupported/document-primary.pdf",
   entryPaths: ["unsupported/document-primary.pdf"],
   expectedSurface: "grid",
-  expectedSelection: ["document-primary.pdf"],
+  expectedSelection: [],
   expectedMetadata: {
     fileTypeLabel: "PDF"
   },
@@ -759,7 +759,7 @@ manifest.push({
   path: "folders/mixed-grid-set",
   entryPaths: ["folders/mixed-grid-set"],
   expectedSurface: "grid",
-  expectedSelection: mixedFolderEntries.map((entry) => path.basename(entry)).sort(),
+  expectedSelection: [],
   expectedMetadata: {},
   expectedOutput: {
     visibleLabels: ["Asset Browser", "plain-primary.txt", "png-primary.png"]
@@ -778,7 +778,7 @@ manifest.push({
   path: "folders/visual-grid-set",
   entryPaths: ["folders/visual-grid-set"],
   expectedSurface: "grid",
-  expectedSelection: visualFolderEntries.map((entry) => path.basename(entry)).sort(),
+  expectedSelection: [],
   expectedMetadata: {},
   expectedOutput: {
     visibleLabels: ["Asset Browser", "png-primary.png", "svg-primary.svg"]
@@ -796,7 +796,7 @@ manifest.push({
   path: "folders/unsupported-grid-set",
   entryPaths: ["folders/unsupported-grid-set"],
   expectedSurface: "grid",
-  expectedSelection: unsupportedFolderEntries.map((entry) => path.basename(entry)).sort(),
+  expectedSelection: [],
   expectedMetadata: {},
   expectedOutput: {
     visibleLabels: ["Asset Browser", "archive-primary.bin", "document-primary.pdf"]

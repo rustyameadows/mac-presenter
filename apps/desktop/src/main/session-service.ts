@@ -35,10 +35,7 @@ function getSelectedAssets(session: SessionRecord | null) {
     return [];
   }
 
-  const selectedAssets = session.assets.filter((asset) =>
-    session.selectedAssetIds.includes(asset.id)
-  );
-  return selectedAssets.length > 0 ? selectedAssets : session.assets.slice(0, 1);
+  return session.assets.filter((asset) => session.selectedAssetIds.includes(asset.id));
 }
 
 async function classifyInputs(entryPaths: string[]): Promise<{

@@ -199,7 +199,7 @@ export function buildSessionRecord(input: {
     hadFolderInput: input.hadFolderInput,
     assets: input.assets,
     selectedAssetIds:
-      route.surface === "grid" ? input.assets.map((asset) => asset.id) : input.assets.map((asset) => asset.id),
+      route.surface === "grid" ? [] : input.assets.map((asset) => asset.id),
     surface: route.surface,
     view: {
       ...defaultSessionViewState,
