@@ -27,6 +27,7 @@ input {
 }
 
 .app-shell {
+  --titlebar-safe-top: 0px;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -35,11 +36,15 @@ input {
   color: var(--canvas-ink);
 }
 
+.app-shell[data-platform="mac"] {
+  --titlebar-safe-top: 30px;
+}
+
 .top-rail {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 8px 10px 6px;
+  padding: calc(8px + var(--titlebar-safe-top)) 10px 6px;
   border-bottom: 1px solid var(--canvas-divider);
   background: transparent;
 }
@@ -360,6 +365,7 @@ input {
   min-width: 0;
   min-height: 0;
   padding-top: 26px;
+  overflow: auto;
 }
 
 .text-region-body > [data-testid="text-body"],
@@ -373,6 +379,18 @@ input {
 diffs-container.code-viewer {
   display: block;
   height: 100%;
+}
+
+.text-region-body [data-code] {
+  min-width: 0;
+}
+
+.text-region-body [data-line] {
+  width: 100%;
+}
+
+.text-region-body [data-column-content] {
+  min-width: 0;
 }
 
 .media-shell {
@@ -607,7 +625,7 @@ diffs-container.code-viewer {
 
 @media (max-width: 1040px) {
   .top-rail {
-    padding: 6px 7px 4px;
+    padding: calc(6px + var(--titlebar-safe-top)) 7px 4px;
   }
 
   .top-rail-main {

@@ -179,6 +179,25 @@ export const codeViewerUnsafeCss = `
   display: none !important;
 }
 
+[data-code] {
+  overflow-x: hidden !important;
+}
+
+[data-line] {
+  align-items: flex-start !important;
+}
+
+[data-column-content] {
+  min-width: 0 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+[data-column-content] * {
+  white-space: inherit !important;
+}
+
 [data-type='split'][data-overflow='scroll'] {
   gap: 1px !important;
   background: var(--diffs-bg-separator);

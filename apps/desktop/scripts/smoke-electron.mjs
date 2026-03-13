@@ -80,6 +80,10 @@ async function readDeepText(window, selector) {
 
 async function openScenario(window, entry) {
   const resolvedPaths = resolveScenarioPaths(entry);
+  return openPaths(window, resolvedPaths, entry.expectedSurface, entry.expectedSelection, entry.id);
+}
+
+async function openPaths(window, resolvedPaths, expectedSurface, expectedSelection, debugLabel = "scenario") {
   await window.evaluate((paths) => window.presenter.loadPaths(paths), resolvedPaths);
   await window.waitForFunction(
     async ({ expectedSurface, expectedSelection }) => {
@@ -95,14 +99,14 @@ async function openScenario(window, entry) {
       );
     },
     {
-      expectedSurface: entry.expectedSurface,
-      expectedSelection: entry.expectedSelection
+      expectedSurface,
+      expectedSelection
     }
   );
 
   const debug = await getDebugState(window);
-  assert(debug, `Missing debug state for ${entry.id}`);
-  assert.equal(debug.enabled, true, `Debug state disabled for ${entry.id}`);
+  assert(debug, `Missing debug state for ${debugLabel}`);
+  assert.equal(debug.enabled, true, `Debug state disabled for ${debugLabel}`);
   return debug;
 }
 
@@ -400,6 +404,22 @@ async function assertSingleRowToolbar(window) {
   assert.equal(new Set(toolbar.tops).size, 1, "Top rail controls wrapped onto multiple rows");
 }
 
+async function assertMacTitlebarInset(window) {
+  if (process.platform !== "darwin") {
+    return;
+  }
+
+  const toolbar = await window.evaluate(() => {
+    const main = document.querySelector('[data-testid="top-rail-main"]');
+    return main instanceof HTMLElement
+      ? { top: Math.round(main.getBoundingClientRect().top) }
+      : null;
+  });
+
+  assert(toolbar, "Missing top rail main row");
+  assert.ok(toolbar.top >= 28, "Top rail sits too close to macOS traffic lights");
+}
+
 async function assertCenteredFitImage(window) {
   const geometry = await window.evaluate(() => {
     const viewport = document.querySelector('[data-testid="asset-viewport"]');
@@ -440,6 +460,33 @@ async function assertZoomAnchorsAtOrigin(window) {
       viewport.scrollTop === 0
     );
   });
+}
+
+async function assertWrappedTextDiff(window) {
+  const wrapMetrics = await window.evaluate(() => {
+    const body = document.querySelector('[data-testid="text-body"]');
+    const viewport = document.querySelector('[data-testid="diff-viewport"]');
+    if (!(body instanceof HTMLElement) || !(viewport instanceof HTMLElement)) {
+      return null;
+    }
+
+    return {
+      bodyClientWidth: body.clientWidth,
+      bodyScrollWidth: body.scrollWidth,
+      viewportClientWidth: viewport.clientWidth,
+      viewportScrollWidth: viewport.scrollWidth
+    };
+  });
+
+  assert(wrapMetrics, "Missing wrapped text diff viewport");
+  assert.ok(
+    wrapMetrics.bodyScrollWidth <= wrapMetrics.bodyClientWidth + 4,
+    "Text diff body still overflows horizontally instead of wrapping"
+  );
+  assert.ok(
+    wrapMetrics.viewportScrollWidth <= wrapMetrics.viewportClientWidth + 4,
+    "Text diff viewport still overflows horizontally instead of wrapping"
+  );
 }
 
 async function assertSurface(window, entry, debug) {
@@ -532,10 +579,26 @@ async function run() {
       await openScenario(window, toolbarScenario);
       await window.setViewportSize({ width: 960, height: 720 });
       await assertSingleRowToolbar(window);
+      await assertMacTitlebarInset(window);
       await window.screenshot({
         path: path.join(outputDir, "top-rail-960.png")
       });
     }
+
+    const longWrapPaths = [
+      path.join(fixtureRoot, "text", "longer-markdown-demo.md"),
+      path.join(fixtureRoot, "text", "longer-markdown-demo-variant.md")
+    ];
+    await openPaths(
+      window,
+      longWrapPaths,
+      "compare",
+      ["longer-markdown-demo.md", "longer-markdown-demo-variant.md"],
+      "long-markdown-wrap-check"
+    );
+    await window.getByRole("button", { name: "Diff" }).click();
+    await window.waitForSelector('[data-testid="diff-viewport"]');
+    await assertWrappedTextDiff(window);
 
     if (imageScenario) {
       await openScenario(window, imageScenario);

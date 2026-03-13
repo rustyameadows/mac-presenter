@@ -206,6 +206,11 @@ export function App() {
   const activeView = session?.view ?? defaultSessionViewState;
   const presentationStyle = getPresentationStyle(activeView);
   const tone = getPresentationTone(activeView);
+  const platform =
+    typeof navigator !== "undefined" &&
+    /Mac|iPhone|iPad|iPod/i.test(`${navigator.platform} ${navigator.userAgent}`)
+      ? "mac"
+      : "other";
 
   if (!bootstrap) {
     return <div className="loading-shell" data-testid="surface-loading">Loading Presenter…</div>;
@@ -215,6 +220,7 @@ export function App() {
     <div
       className="app-shell"
       data-testid={`surface-${session?.surface ?? "empty"}`}
+      data-platform={platform}
       data-tone={tone}
       style={presentationStyle}
     >
