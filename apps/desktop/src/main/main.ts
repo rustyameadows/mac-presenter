@@ -2,6 +2,7 @@ import { app, type Tray } from "electron";
 import path from "node:path";
 
 import { broadcastSessionResponse, registerIpc } from "./ipc";
+import { createMacOpenFileIntake } from "./mac-open-file";
 import { registerMediaProtocol } from "./protocol";
 import { SessionService } from "./session-service";
 import { SessionStore } from "./session-store";
@@ -9,6 +10,22 @@ import { createPresenterTray, showOpenFilesDialog, showOpenFolderDialog } from "
 import { WindowManager } from "./window-manager";
 
 let presenterTray: Tray | null = null;
+let loadPathsFromOpenFile: ((paths: string[]) => Promise<void>) | null = null;
+
+const macOpenFileIntake = createMacOpenFileIntake({
+  onPaths: async (paths) => {
+    if (!loadPathsFromOpenFile) {
+      return;
+    }
+
+    await loadPathsFromOpenFile(paths);
+  }
+});
+
+app.on("open-file", (event, filePath) => {
+  event.preventDefault();
+  macOpenFileIntake.queue(filePath);
+});
 
 async function bootstrap(): Promise<void> {
   if (!app.requestSingleInstanceLock()) {
@@ -30,23 +47,26 @@ async function bootstrap(): Promise<void> {
   const windowManager = new WindowManager();
   windowManager.createWindow();
 
-  const openFiles = async () => {
-    const filePaths = await showOpenFilesDialog(windowManager.getWindow());
-    const response = await sessionService.loadPaths(filePaths);
+  const loadPathsIntoSession = async (paths: string[]) => {
+    const response = await sessionService.loadPaths(paths);
     broadcastSessionResponse(response);
     if (response.session) {
       windowManager.showWindow();
     }
   };
 
+  const openFiles = async () => {
+    const filePaths = await showOpenFilesDialog(windowManager.getWindow());
+    await loadPathsIntoSession(filePaths);
+  };
+
   const openFolder = async () => {
     const filePaths = await showOpenFolderDialog(windowManager.getWindow());
-    const response = await sessionService.loadPaths(filePaths);
-    broadcastSessionResponse(response);
-    if (response.session) {
-      windowManager.showWindow();
-    }
+    await loadPathsIntoSession(filePaths);
   };
+
+  loadPathsFromOpenFile = loadPathsIntoSession;
+  await macOpenFileIntake.setReady();
 
   registerIpc({
     sessionService,
@@ -64,13 +84,7 @@ async function bootstrap(): Promise<void> {
     showWindow: () => windowManager.showWindow(),
     openFiles,
     openFolder,
-    loadPaths: async (paths) => {
-      const response = await sessionService.loadPaths(paths);
-      broadcastSessionResponse(response);
-      if (response.session) {
-        windowManager.showWindow();
-      }
-    },
+    loadPaths: loadPathsIntoSession,
     recentSessions: () => sessionService.getBootstrap().recentSessions,
     openRecent: async (id) => {
       const response = await sessionService.openRecentSession(id);

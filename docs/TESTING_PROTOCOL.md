@@ -83,6 +83,7 @@
 ## Manual QA
 - drag two image files onto the menubar icon and confirm direct 2-up open
 - drag a folder and confirm grid browser routing
+- in Finder, use `Open With > Presenter` on one supported file and on a multi-file supported selection, then confirm the routed session matches the selection
 - in grid view, confirm `Select All`, `Clear`, `Cmd+A`, and `Cmd+Shift+A`
 - in a zoomed image compare, confirm `2x` / `4x` preserve the prior viewport center and allow scrolling
 - verify closing the presenter window hides it without quitting the tray app

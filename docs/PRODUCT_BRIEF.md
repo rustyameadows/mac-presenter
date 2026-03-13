@@ -120,6 +120,7 @@ Mixed-type sets can exist in the grid browser, but compare mode should only enab
 
 ### A. Intake surface
 - drag and drop files/folders
+- Finder `Open With > Presenter` for supported files
 - open dialog for files/folders
 - recent sessions list
 

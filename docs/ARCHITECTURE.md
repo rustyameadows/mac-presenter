@@ -37,7 +37,7 @@
 - Closing the window hides it; quitting happens from the tray menu or app quit events
 
 ## Intake Flow
-1. Files or folders are dropped on the tray icon, or opened via the tray menu.
+1. Files or folders are dropped on the tray icon, opened via the tray menu, or sent from Finder `Open With` for supported packaged-file types.
 2. Main process expands folders recursively and builds asset records.
 3. Core routing decides the starting surface:
    - `1` asset -> single viewer

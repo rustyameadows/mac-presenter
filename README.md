@@ -32,9 +32,10 @@ Mixed folders are fine in the Grid Browser, but compare mode is intentionally sa
 Presenter lives in the macOS menu bar.
 
 1. Drag files or folders onto the menu bar icon.
-2. If the set is small and compatible, Presenter opens the Compare Workspace immediately.
-3. If the set is larger, Presenter opens the Grid Browser so you can filter, sort, multi-select, and compare only what matters.
-4. Close the window when you are done. The app stays resident in the menu bar for the next session.
+2. Or use Finder `Open With > Presenter` for supported files.
+3. If the set is small and compatible, Presenter opens the Compare Workspace immediately.
+4. If the set is larger, Presenter opens the Grid Browser so you can filter, sort, multi-select, and compare only what matters.
+5. Close the window when you are done. The app stays resident in the menu bar for the next session.
 
 There is also a manual fallback inside the window for `Open Files` and `Open Folder`.
 

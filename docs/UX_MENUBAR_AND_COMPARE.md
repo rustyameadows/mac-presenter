@@ -3,6 +3,7 @@
 ## Primary Entry Point
 - The menubar icon is the default starting surface.
 - Dragging files or folders onto the tray should feel immediate and bypass extra intake UI.
+- Finder `Open With > Presenter` should route the current supported-file selection into the same intake flow as tray drop.
 - Left click reopens the active presenter window.
 - Right click opens the native menu for fallback actions and recents.
 

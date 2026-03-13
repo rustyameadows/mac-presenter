@@ -1,5 +1,11 @@
 # Decisions
 
+## 2026-03-13
+
+### Packaged file-open integration
+- The packaged macOS app now declares the same supported extensions as the app support contract so Finder can offer `Open With > Presenter`.
+- macOS `open-file` events are batched into one intake load so multi-file Finder selections reopen as one Presenter session instead of one window update per file.
+
 ## 2026-03-12
 
 ### Menubar-first shell
