@@ -93,8 +93,6 @@ export function TopRail(props: {
   onGridDeselectAll: () => void;
   onGridCompare: () => void;
   onBackToGrid: () => void;
-  onOpenFiles: () => void;
-  onOpenFolder: () => void;
   onPlaybackCommand: (command: PlaybackCommand) => void;
 }) {
   const showViewerControls =
@@ -363,39 +361,23 @@ export function TopRail(props: {
               >
                 Clear
               </button>
-              <button
-                type="button"
-                aria-label={`Compare ${props.gridSelectedCount}`}
-                title={`Compare ${props.gridSelectedCount}`}
-                className={`button${props.canGridCompare ? " button-primary" : ""}`}
-                disabled={!props.canGridCompare}
-                onClick={props.onGridCompare}
-              >
-                {`Compare ${props.gridSelectedCount}`}
-              </button>
             </>
           ) : null}
         </div>
 
         <div className="rail-group rail-end">
-          <button
-            type="button"
-            aria-label="Open Files"
-            title="Open Files"
-            className="button"
-            onClick={props.onOpenFiles}
-          >
-            Files
-          </button>
-          <button
-            type="button"
-            aria-label="Open Folder"
-            title="Open Folder"
-            className="button"
-            onClick={props.onOpenFolder}
-          >
-            Folder
-          </button>
+          {showGridControls ? (
+            <button
+              type="button"
+              aria-label={`Compare ${props.gridSelectedCount}`}
+              title={`Compare ${props.gridSelectedCount}`}
+              className={`button${props.canGridCompare ? " button-primary" : ""}`}
+              disabled={!props.canGridCompare}
+              onClick={props.onGridCompare}
+            >
+              {`Compare ${props.gridSelectedCount}`}
+            </button>
+          ) : null}
           {props.showBackToGrid ? (
             <button
               type="button"

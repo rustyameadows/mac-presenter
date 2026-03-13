@@ -382,9 +382,7 @@ describe("fixture-driven renderer coverage", () => {
     render(
       <GridBrowser
         session={session}
-        recentSessions={[]}
         onSelect={() => {}}
-        onOpenRecent={() => {}}
       />
     );
 

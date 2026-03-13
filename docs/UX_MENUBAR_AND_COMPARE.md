@@ -21,7 +21,7 @@ Features:
 - the fixed top rail centers filter / sort / select / clear controls so they remain reachable while the grid scrolls
 - sort and filter controls
 - compare uses an inline `Compare n` action instead of a separate selected-count summary
-- recent sessions list below the asset wall
+- grid tiles use fixed square preview wells for a steadier column rhythm
 
 ## Compare Workspace
 Used when:
@@ -55,13 +55,16 @@ Controls:
 - sync pan for visual pairs
 - sync playback and frame-step for video pairs
 - metadata toggle
-- back to grid when relevant
+- a single right-side mode action:
+  - `Compare n` in grid
+  - `Grid` when returning from compare is relevant
 
 Visual rules:
 - the rail sits directly on the active canvas color
 - controls use compact monochrome states with contrast based on the current background
 - session notices stay lightweight and do not create heavy chrome
 - zoom changes preserve the current visual viewport center instead of snapping back to the origin
+- manual file/folder picking stays in the tray menu and empty state, not in the main top rail
 
 ## Family-Specific Behavior
 ### Images

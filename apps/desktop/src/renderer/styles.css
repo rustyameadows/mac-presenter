@@ -53,7 +53,7 @@ input {
 .top-rail-main {
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   min-width: 0;
   flex-wrap: nowrap;
@@ -467,10 +467,7 @@ diffs-container.code-viewer {
 }
 
 .grid-shell {
-  display: flex;
-  flex-direction: column;
   flex: 1;
-  gap: 12px;
   min-height: 0;
   padding: 8px 10px 12px;
   overflow: auto;
@@ -479,7 +476,7 @@ diffs-container.code-viewer {
 
 .grid-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0;
   border-top: var(--divider-thickness) solid var(--canvas-divider);
   border-left: var(--divider-thickness) solid var(--canvas-divider);
@@ -491,7 +488,6 @@ diffs-container.code-viewer {
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  min-height: 248px;
   border: 0;
   border-radius: 0;
   border-right: var(--divider-thickness) solid var(--canvas-divider);
@@ -509,10 +505,11 @@ diffs-container.code-viewer {
 
 .asset-preview {
   display: flex;
-  flex: 1;
+  flex: 0 0 auto;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   align-items: center;
   justify-content: center;
-  min-height: 160px;
   padding: 8px;
   overflow: hidden;
   background: transparent;
@@ -563,7 +560,6 @@ diffs-container.code-viewer {
   text-transform: uppercase;
 }
 
-.grid-recents,
 .empty-recents,
 .empty-section {
   display: flex;

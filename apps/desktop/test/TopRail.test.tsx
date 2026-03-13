@@ -97,8 +97,6 @@ describe("TopRail", () => {
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
         onBackToGrid={() => {}}
-        onOpenFiles={() => {}}
-        onOpenFolder={() => {}}
         onPlaybackCommand={() => {}}
       />
     );
@@ -147,8 +145,6 @@ describe("TopRail", () => {
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
         onBackToGrid={() => {}}
-        onOpenFiles={() => {}}
-        onOpenFolder={() => {}}
         onPlaybackCommand={(command) => calls.push(command.type)}
       />
     );
@@ -198,8 +194,6 @@ describe("TopRail", () => {
         onGridDeselectAll={() => calls.push("clear")}
         onGridCompare={() => calls.push("compare")}
         onBackToGrid={() => {}}
-        onOpenFiles={() => {}}
-        onOpenFolder={() => {}}
         onPlaybackCommand={() => {}}
       />
     );
@@ -215,5 +209,92 @@ describe("TopRail", () => {
     fireEvent.click(screen.getByRole("button", { name: "Compare 2" }));
 
     expect(calls).toEqual(["filter", "sort", "select", "clear", "compare"]);
+  });
+
+  it("uses the right rail group only for mode switching actions", () => {
+    render(
+      <TopRail
+        surface="compare"
+        family="image"
+        assetCount={2}
+        capability={getCompareCapability([
+          {
+            id: "one",
+            name: "one.svg",
+            path: "/one.svg",
+            extension: ".svg",
+            family: "image",
+            supported: true,
+            previewable: true,
+            metadata: {
+              filename: "one.svg",
+              path: "/one.svg",
+              extension: ".svg",
+              fileTypeLabel: "SVG",
+              sizeBytes: 1,
+              createdAt: new Date().toISOString(),
+              modifiedAt: new Date().toISOString(),
+              family: "image",
+              width: 100,
+              height: 100,
+              aspectRatio: 1,
+              format: "svg"
+            }
+          },
+          {
+            id: "two",
+            name: "two.svg",
+            path: "/two.svg",
+            extension: ".svg",
+            family: "image",
+            supported: true,
+            previewable: true,
+            metadata: {
+              filename: "two.svg",
+              path: "/two.svg",
+              extension: ".svg",
+              fileTypeLabel: "SVG",
+              sizeBytes: 1,
+              createdAt: new Date().toISOString(),
+              modifiedAt: new Date().toISOString(),
+              family: "image",
+              width: 100,
+              height: 100,
+              aspectRatio: 1,
+              format: "svg"
+            }
+          }
+        ])}
+        view={baseView}
+        showBackToGrid={true}
+        notice={null}
+        gridFilter="all"
+        gridSort="name"
+        gridSelectedCount={0}
+        hasGridVisibleAssets={false}
+        hasGridVisibleSelection={false}
+        canGridCompare={false}
+        onLayoutChange={() => {}}
+        onToggleDiff={() => {}}
+        onBackgroundChange={() => {}}
+        onZoomChange={() => {}}
+        onFitModeChange={() => {}}
+        onMetadataToggle={() => {}}
+        onTextDiffModeChange={() => {}}
+        onSyncPanChange={() => {}}
+        onSyncPlaybackChange={() => {}}
+        onGridFilterChange={() => {}}
+        onGridSortChange={() => {}}
+        onGridSelectAll={() => {}}
+        onGridDeselectAll={() => {}}
+        onGridCompare={() => {}}
+        onBackToGrid={() => {}}
+        onPlaybackCommand={() => {}}
+      />
+    );
+
+    expect(screen.queryByRole("button", { name: "Open Files" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Open Folder" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Back to Grid" })).toBeInTheDocument();
   });
 });

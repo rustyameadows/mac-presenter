@@ -315,8 +315,6 @@ export function App() {
           void window.presenter.openSelection(session.selectedAssetIds).then(applyResponse);
         }}
         onBackToGrid={() => void window.presenter.backToGrid().then(applyResponse)}
-        onOpenFiles={() => void window.presenter.openFilesDialog().then(applyResponse)}
-        onOpenFolder={() => void window.presenter.openFolderDialog().then(applyResponse)}
         onPlaybackCommand={(command) => setPlaybackCommand(command)}
       />
 
@@ -333,10 +331,6 @@ export function App() {
             onSelect={(assetIds) =>
               void window.presenter.setSelection(assetIds).then(applyResponse)
             }
-            onOpenRecent={(id) =>
-              void window.presenter.openRecentSession(id).then(applyResponse)
-            }
-            recentSessions={bootstrap.recentSessions}
           />
         ) : (
           <div className="workspace-shell" data-testid="workspace-shell">

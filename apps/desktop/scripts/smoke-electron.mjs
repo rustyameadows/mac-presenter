@@ -644,8 +644,6 @@ async function assertGridSelectionControls(window, entry) {
     const state = await window.presenter.getDebugState();
     return JSON.stringify(state?.selectedAssetNames ?? []) === JSON.stringify(["png-primary.png"]);
   });
-
-  await assertGridCanScroll(window);
 }
 
 async function assertSurface(window, entry, debug) {
@@ -734,6 +732,7 @@ async function run() {
 
     const toolbarScenario = manifest.find((entry) => entry.id === "text-plain-pair");
     const gridSelectionScenario = manifest.find((entry) => entry.id === "folder-mixed-grid-set");
+    const largeGridScenario = manifest.find((entry) => entry.id === "folder-visual-grid-set");
     const imageScenario = manifest.find((entry) => entry.id === "image-png-primary");
 
     if (toolbarScenario) {
@@ -763,6 +762,11 @@ async function run() {
 
     if (gridSelectionScenario) {
       await assertGridSelectionControls(window, gridSelectionScenario);
+    }
+
+    if (largeGridScenario) {
+      await openScenario(window, largeGridScenario);
+      await assertGridCanScroll(window);
     }
 
     if (imageScenario) {

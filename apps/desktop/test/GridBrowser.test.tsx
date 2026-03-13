@@ -82,9 +82,7 @@ describe("GridBrowser", () => {
     render(
       <GridBrowser
         session={session}
-        recentSessions={[]}
         onSelect={() => {}}
-        onOpenRecent={() => {}}
       />
     );
 
@@ -99,9 +97,7 @@ describe("GridBrowser", () => {
     const { rerender } = render(
       <GridBrowser
         session={session}
-        recentSessions={[]}
         onSelect={(assetIds) => selectCalls.push(assetIds)}
-        onOpenRecent={() => {}}
       />
     );
 
@@ -111,9 +107,7 @@ describe("GridBrowser", () => {
     rerender(
       <GridBrowser
         session={{ ...session, selectedAssetIds: ["one", "two"] }}
-        recentSessions={[]}
         onSelect={(assetIds) => selectCalls.push(assetIds)}
-        onOpenRecent={() => {}}
       />
     );
 
@@ -125,12 +119,21 @@ describe("GridBrowser", () => {
     render(
       <GridBrowser
         session={{ ...session, selectedAssetIds: ["one"] }}
-        recentSessions={[]}
         onSelect={() => {}}
-        onOpenRecent={() => {}}
       />
     );
 
     expect(screen.getAllByTestId("asset-card")[0]).toHaveClass("asset-tile-selected");
+  });
+
+  it("does not render the recent sessions strip below the grid", () => {
+    render(
+      <GridBrowser
+        session={session}
+        onSelect={() => {}}
+      />
+    );
+
+    expect(screen.queryByText("Recent sessions")).toBeNull();
   });
 });

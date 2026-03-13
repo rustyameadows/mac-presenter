@@ -1,6 +1,5 @@
 import {
   type AssetRecord,
-  type RecentSessionSummary,
   type SessionRecord
 } from "@presenter/core";
 import { useEffect, useMemo } from "react";
@@ -78,9 +77,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
 
 export function GridBrowser(props: {
   session: SessionRecord;
-  recentSessions: RecentSessionSummary[];
   onSelect: (assetIds: string[]) => void;
-  onOpenRecent: (id: string) => void;
 }) {
   const filteredAssets = props.session.assets
     .filter((asset) =>
@@ -177,25 +174,6 @@ export function GridBrowser(props: {
           );
         })}
       </div>
-
-      <section className="grid-recents">
-        <div className="section-title">Recent sessions</div>
-        {props.recentSessions.length === 0 ? (
-          <div className="muted">No recents yet.</div>
-        ) : (
-          props.recentSessions.map((recent) => (
-            <button
-              key={recent.id}
-              type="button"
-              className="recent-item"
-              onClick={() => props.onOpenRecent(recent.id)}
-            >
-              <span>{recent.title}</span>
-              <span className="muted">{recent.assetCount} assets</span>
-            </button>
-          ))
-        )}
-      </section>
     </section>
   );
 }
