@@ -34,7 +34,9 @@
 - single-view rendering for representative text, image, gif, and video entries
 - text/code output renders as source content, not executed HTML or rich text
 - compare rendering for text diff, image compare, gif compare, and video compare
-- metadata panel content and unsupported-state rendering
+- explicit 3-up and 4-up viewer rendering
+- metadata overlay content without workspace reflow
+- unsupported-state rendering
 - long-document viewport behavior and non-empty body output
 
 ### Built Smoke
@@ -54,16 +56,20 @@
 - standard screenshot set includes:
   - plain text single view
   - text diff
+  - 3-up compare
+  - 4-up compare
   - image compare or diff
   - video compare
   - mixed grid
   - unsupported state
+  - metadata overlay open
 
 ## Support Contract Rules
 - adding a new supported extension requires adding committed fixtures and manifest entries in the same change
 - unsupported files must remain visible as unsupported cards instead of disappearing silently
 - text and code surfaces must display raw source content in the main viewport
 - metadata must remain visible separately from the main content body
+- metadata overlays must not resize the compare stage
 - the smoke suite must include at least one plain `.txt` single-view scenario
 
 ## Manual QA

@@ -30,3 +30,8 @@
 ### TIFF remains unsupported
 - The app can inspect TIFF metadata, but Electron/Chromium does not render TIFF assets reliably in the shipped viewer surface.
 - `.tif` and `.tiff` are therefore treated as unsupported in the current support contract and are covered by unsupported-state fixtures instead of preview fixtures.
+
+### Flat-canvas renderer
+- The viewer, grid browser, and empty state now use a shared flat canvas language instead of pane cards and layered chrome.
+- White is the default session background, while checker, black, white, and custom remain available as persisted options.
+- Metadata now opens as an overlay sheet so compare layouts never reflow when detailed info is shown.

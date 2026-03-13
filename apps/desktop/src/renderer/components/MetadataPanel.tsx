@@ -1,4 +1,8 @@
 import type { AssetRecord } from "@presenter/core";
+import {
+  useEffect,
+  useRef
+} from "react";
 
 function MetadataRows({ asset }: { asset: AssetRecord }) {
   return (
@@ -94,16 +98,71 @@ function MetadataRows({ asset }: { asset: AssetRecord }) {
   );
 }
 
-export function MetadataPanel(props: { assets: AssetRecord[] }) {
+export function MetadataPanel(props: {
+  assets: AssetRecord[];
+  onDismiss: () => void;
+}) {
+  const panelRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    panelRef.current?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        props.onDismiss();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [props]);
+
   return (
-    <aside className="metadata-panel" data-testid="metadata-panel">
-      <div className="section-title">Metadata</div>
-      {props.assets.map((asset) => (
-        <section key={asset.id} className="metadata-card" data-testid="metadata-card">
-          <div className="metadata-card-title">{asset.name}</div>
-          <MetadataRows asset={asset} />
-        </section>
-      ))}
-    </aside>
+    <div
+      className="metadata-overlay"
+      data-testid="metadata-overlay"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          props.onDismiss();
+        }
+      }}
+    >
+      <aside
+        ref={panelRef}
+        className="metadata-panel"
+        data-testid="metadata-panel"
+        role="dialog"
+        aria-modal="false"
+        tabIndex={-1}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <div className="metadata-panel-header">
+          <div className="section-title">Metadata</div>
+          <button
+            type="button"
+            className="button"
+            onClick={props.onDismiss}
+            aria-label="Close Metadata"
+            title="Close Metadata"
+          >
+            Close
+          </button>
+        </div>
+
+        <div className="metadata-panel-body">
+          {props.assets.map((asset) => (
+            <section
+              key={asset.id}
+              className="metadata-section"
+              data-testid="metadata-card"
+            >
+              <div className="metadata-card-title">{asset.name}</div>
+              <MetadataRows asset={asset} />
+            </section>
+          ))}
+        </div>
+      </aside>
+    </div>
   );
 }

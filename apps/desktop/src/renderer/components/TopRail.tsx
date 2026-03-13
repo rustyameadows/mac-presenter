@@ -2,6 +2,7 @@ import type {
   AssetFamily,
   CompareCapability,
   CompareLayout,
+  SessionSurface,
   SessionViewState,
   TextDiffMode
 } from "@presenter/core";
@@ -9,6 +10,15 @@ import type {
 export interface PlaybackCommand {
   type: "step-backward" | "step-forward" | "play-pause";
   token: number;
+}
+
+function CompactLabel(props: { full: string; compact?: string }) {
+  return (
+    <>
+      <span className="label-full">{props.full}</span>
+      <span className="label-compact">{props.compact ?? props.full}</span>
+    </>
+  );
 }
 
 function labelForLayout(layout: CompareLayout): string {
@@ -54,6 +64,7 @@ function fullLabelForLayout(layout: CompareLayout): string {
 }
 
 export function TopRail(props: {
+  surface: SessionSurface | "empty";
   family: AssetFamily | "mixed";
   assetCount: number;
   capability: CompareCapability;
@@ -74,6 +85,9 @@ export function TopRail(props: {
   onOpenFolder: () => void;
   onPlaybackCommand: (command: PlaybackCommand) => void;
 }) {
+  const showViewerControls =
+    props.surface === "single" || props.surface === "compare";
+
   return (
     <header className="top-rail" data-testid="top-rail">
       <div className="top-rail-main" data-testid="top-rail-main">
@@ -83,24 +97,24 @@ export function TopRail(props: {
             className={`button${props.view.background === "checker" ? " is-active" : ""}`}
             onClick={() => props.onBackgroundChange("checker", props.view.backgroundColor)}
           >
-            Checker
+            <CompactLabel full="Checker" compact="Chk" />
           </button>
           <button
             type="button"
             className={`button${props.view.background === "black" ? " is-active" : ""}`}
             onClick={() => props.onBackgroundChange("black", "#050505")}
           >
-            Black
+            <CompactLabel full="Black" compact="Blk" />
           </button>
           <button
             type="button"
             className={`button${props.view.background === "white" ? " is-active" : ""}`}
             onClick={() => props.onBackgroundChange("white", "#ffffff")}
           >
-            White
+            <CompactLabel full="White" compact="Wht" />
           </button>
           <label className="color-picker">
-            <span>Custom</span>
+            <CompactLabel full="Custom" compact="Cust" />
             <input
               type="color"
               value={props.view.backgroundColor}
@@ -111,40 +125,46 @@ export function TopRail(props: {
           </label>
         </div>
 
-        <div className="rail-group rail-center">
-          {[1, 2, 4, 10].map((zoom) => (
-            <button
-              key={zoom}
-              type="button"
-              className={`button${props.view.zoom === zoom ? " is-active" : ""}`}
-              onClick={() => props.onZoomChange(zoom as SessionViewState["zoom"])}
-            >
-              {zoom}x
-            </button>
-          ))}
-        </div>
+        {showViewerControls ? (
+          <div className="rail-group rail-center">
+            {[1, 2, 4, 10].map((zoom) => (
+              <button
+                key={zoom}
+                type="button"
+                className={`button${props.view.zoom === zoom ? " is-active" : ""}`}
+                onClick={() => props.onZoomChange(zoom as SessionViewState["zoom"])}
+              >
+                {zoom}x
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="rail-group rail-center" />
+        )}
 
         <div className="rail-group rail-wrap">
-          {props.capability.layouts
-            .filter((layout) => layout !== "diff")
-            .map((layout) => {
-              const fullLabel = fullLabelForLayout(layout);
+          {showViewerControls
+            ? props.capability.layouts
+                .filter((layout) => layout !== "diff")
+                .map((layout) => {
+                  const fullLabel = fullLabelForLayout(layout);
 
-              return (
-                <button
-                  key={layout}
-                  type="button"
-                  aria-label={fullLabel}
-                  title={fullLabel}
-                  className={`button${props.view.layout === layout ? " is-active" : ""}`}
-                  onClick={() => props.onLayoutChange(layout)}
-                >
-                  {labelForLayout(layout)}
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={layout}
+                      type="button"
+                      aria-label={fullLabel}
+                      title={fullLabel}
+                      className={`button${props.view.layout === layout ? " is-active" : ""}`}
+                      onClick={() => props.onLayoutChange(layout)}
+                    >
+                      {labelForLayout(layout)}
+                    </button>
+                  );
+                })
+            : null}
 
-          {props.capability.canDiff ? (
+          {showViewerControls && props.capability.canDiff ? (
             <button
               type="button"
               aria-label="Diff"
@@ -156,47 +176,51 @@ export function TopRail(props: {
             </button>
           ) : null}
 
-          <button
-            type="button"
-            aria-label="Fit"
-            title="Fit"
-            className={`button${props.view.fitMode === "fit" ? " is-active" : ""}`}
-            onClick={() => props.onFitModeChange("fit")}
-          >
-            Fit
-          </button>
-          <button
-            type="button"
-            aria-label="Fill"
-            title="Fill"
-            className={`button${props.view.fitMode === "fill" ? " is-active" : ""}`}
-            onClick={() => props.onFitModeChange("fill")}
-          >
-            Fill
-          </button>
-          <button
-            type="button"
-            aria-label="Actual"
-            title="Actual"
-            className={`button${props.view.fitMode === "actual" ? " is-active" : ""}`}
-            onClick={() => props.onFitModeChange("actual")}
-          >
-            1:1
-          </button>
+          {showViewerControls ? (
+            <>
+              <button
+                type="button"
+                aria-label="Fit"
+                title="Fit"
+                className={`button${props.view.fitMode === "fit" ? " is-active" : ""}`}
+                onClick={() => props.onFitModeChange("fit")}
+              >
+                Fit
+              </button>
+              <button
+                type="button"
+                aria-label="Fill"
+                title="Fill"
+                className={`button${props.view.fitMode === "fill" ? " is-active" : ""}`}
+                onClick={() => props.onFitModeChange("fill")}
+              >
+                Fill
+              </button>
+              <button
+                type="button"
+                aria-label="Actual"
+                title="Actual"
+                className={`button${props.view.fitMode === "actual" ? " is-active" : ""}`}
+                onClick={() => props.onFitModeChange("actual")}
+              >
+                1:1
+              </button>
 
-          {props.capability.canSyncPan ? (
-            <button
-              type="button"
-              aria-label="Sync Pan"
-              title="Sync Pan"
-              className={`button${props.view.syncPan ? " is-active" : ""}`}
-              onClick={props.onSyncPanChange}
-            >
-              Pan
-            </button>
+              {props.capability.canSyncPan ? (
+                <button
+                  type="button"
+                  aria-label="Sync Pan"
+                  title="Sync Pan"
+                  className={`button${props.view.syncPan ? " is-active" : ""}`}
+                  onClick={props.onSyncPanChange}
+                >
+                  Pan
+                </button>
+              ) : null}
+            </>
           ) : null}
 
-          {props.family === "video" ? (
+          {showViewerControls && props.family === "video" ? (
             <>
               <button
                 type="button"
@@ -252,7 +276,7 @@ export function TopRail(props: {
             </>
           ) : null}
 
-          {props.family === "text" && props.view.layout === "diff" ? (
+          {showViewerControls && props.family === "text" && props.view.layout === "diff" ? (
             <select
               aria-label="Text Diff Mode"
               className="rail-select"
@@ -266,15 +290,17 @@ export function TopRail(props: {
             </select>
           ) : null}
 
-          <button
-            type="button"
-            aria-label={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
-            title={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
-            className="button"
-            onClick={props.onMetadataToggle}
-          >
-            Meta
-          </button>
+          {showViewerControls ? (
+            <button
+              type="button"
+              aria-label={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
+              title={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
+              className="button"
+              onClick={props.onMetadataToggle}
+            >
+              Meta
+            </button>
+          ) : null}
           <button
             type="button"
             aria-label="Open Files"

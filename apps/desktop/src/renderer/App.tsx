@@ -1,7 +1,7 @@
 import {
+  defaultSessionViewState,
   deriveCurrentFamily,
   getCompareCapability,
-  getSelectionEligibility,
   type AssetLoadWarning,
   type AssetRecord,
   type SessionRecord,
@@ -19,6 +19,10 @@ import { CompareStage } from "./components/CompareStage";
 import { GridBrowser } from "./components/GridBrowser";
 import { MetadataPanel } from "./components/MetadataPanel";
 import { TopRail, type PlaybackCommand } from "./components/TopRail";
+import {
+  getPresentationStyle,
+  getPresentationTone
+} from "./presentation";
 
 function buildNotice(error: string | undefined, warnings: AssetLoadWarning[]): string | null {
   if (error && warnings.length > 0) {
@@ -88,24 +92,28 @@ function EmptyState(props: {
 }) {
   return (
     <div className="empty-shell" data-testid="surface-empty">
-      <div className="empty-hero">
+      <section className="empty-section">
         <span className="eyebrow">Presenter</span>
         <h1>Drop files or folders onto the menu bar icon.</h1>
         <p>
-          The main workflow starts from anywhere on your Mac. Use these fallbacks
-          when you want to pick files manually.
+          The main workflow starts from anywhere on your Mac. These fallbacks stay
+          here when you want to pick files manually.
         </p>
         <div className="empty-actions">
-          <button type="button" className="button button-primary" onClick={() => void props.onOpenFiles()}>
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={() => void props.onOpenFiles()}
+          >
             Open Files
           </button>
           <button type="button" className="button" onClick={() => void props.onOpenFolder()}>
             Open Folder
           </button>
         </div>
-      </div>
+      </section>
 
-      <div className="recent-stack">
+      <section className="empty-section empty-recents">
         <div className="section-title">Recent sessions</div>
         {props.recentTitles.length > 0 ? (
           props.recentTitles.map((title) => (
@@ -116,7 +124,7 @@ function EmptyState(props: {
         ) : (
           <div className="muted">No recent sessions yet.</div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
@@ -195,32 +203,35 @@ export function App() {
   const selectedAssets = getSelectedAssets(session);
   const capability = getCompareCapability(selectedAssets);
   const family = deriveCurrentFamily(selectedAssets);
+  const activeView = session?.view ?? defaultSessionViewState;
+  const presentationStyle = getPresentationStyle(activeView);
+  const tone = getPresentationTone(activeView);
 
   if (!bootstrap) {
     return <div className="loading-shell" data-testid="surface-loading">Loading Presenter…</div>;
   }
 
-  if (!session) {
-    return (
-      <EmptyState
-        recentTitles={bootstrap.recentSessions.map((item) => item.title)}
-        onOpenFiles={() => window.presenter.openFilesDialog().then(applyResponse)}
-        onOpenFolder={() => window.presenter.openFolderDialog().then(applyResponse)}
-      />
-    );
-  }
-
   return (
-    <div className="app-shell" data-testid={`surface-${session.surface}`}>
+    <div
+      className="app-shell"
+      data-testid={`surface-${session?.surface ?? "empty"}`}
+      data-tone={tone}
+      style={presentationStyle}
+    >
       <TopRail
+        surface={session?.surface ?? "empty"}
         family={family}
         assetCount={selectedAssets.length}
         capability={capability}
-        view={session.view}
+        view={activeView}
         showBackToGrid={shouldShowBackToGrid(session)}
         notice={notice}
         onLayoutChange={(layout) => updateView({ layout })}
         onToggleDiff={() => {
+          if (!session) {
+            return;
+          }
+
           const nextLayout =
             session.view.layout === "diff"
               ? capability.layouts.find((layout) => layout !== "diff") ?? "side-by-side"
@@ -230,10 +241,16 @@ export function App() {
         onBackgroundChange={(background, backgroundColor) => updateView({ background, backgroundColor })}
         onZoomChange={(zoom) => updateView({ zoom })}
         onFitModeChange={(fitMode) => updateView({ fitMode })}
-        onMetadataToggle={() => updateView({ metadataOpen: !session.view.metadataOpen })}
+        onMetadataToggle={() =>
+          session ? updateView({ metadataOpen: !session.view.metadataOpen }) : undefined
+        }
         onTextDiffModeChange={(textDiffMode) => updateView({ textDiffMode })}
-        onSyncPanChange={() => updateView({ syncPan: !session.view.syncPan })}
-        onSyncPlaybackChange={() => updateView({ syncPlayback: !session.view.syncPlayback })}
+        onSyncPanChange={() =>
+          session ? updateView({ syncPan: !session.view.syncPan }) : undefined
+        }
+        onSyncPlaybackChange={() =>
+          session ? updateView({ syncPlayback: !session.view.syncPlayback }) : undefined
+        }
         onBackToGrid={() => void window.presenter.backToGrid().then(applyResponse)}
         onOpenFiles={() => void window.presenter.openFilesDialog().then(applyResponse)}
         onOpenFolder={() => void window.presenter.openFolderDialog().then(applyResponse)}
@@ -241,7 +258,13 @@ export function App() {
       />
 
       <div className="content-shell">
-        {session.surface === "grid" ? (
+        {!session ? (
+          <EmptyState
+            recentTitles={bootstrap.recentSessions.map((item) => item.title)}
+            onOpenFiles={() => window.presenter.openFilesDialog().then(applyResponse)}
+            onOpenFolder={() => window.presenter.openFolderDialog().then(applyResponse)}
+          />
+        ) : session.surface === "grid" ? (
           <GridBrowser
             session={session}
             onSelect={(assetIds) =>
@@ -250,6 +273,9 @@ export function App() {
             onViewChange={(patch) => updateView(patch)}
             onCompare={(assetIds) =>
               void window.presenter.openSelection(assetIds).then(applyResponse)
+            }
+            onOpenFiles={() =>
+              void window.presenter.openFilesDialog().then(applyResponse)
             }
             onOpenRecent={(id) =>
               void window.presenter.openRecentSession(id).then(applyResponse)
@@ -265,54 +291,16 @@ export function App() {
               textContent={textContent}
               playbackCommand={playbackCommand}
             />
-            {session.view.metadataOpen ? (
-              <MetadataPanel assets={selectedAssets} />
-            ) : null}
           </div>
         )}
-      </div>
 
-      {session.surface === "grid" ? (
-        <footer className="grid-footer">
-          {(() => {
-            const selection = session.assets.filter((asset) =>
-              session.selectedAssetIds.includes(asset.id)
-            );
-            const eligibility = getSelectionEligibility(selection);
-            return (
-              <>
-                <div>
-                  {selection.length} selected
-                  {eligibility.reason ? (
-                    <span className="muted"> · {eligibility.reason}</span>
-                  ) : null}
-                </div>
-                <div className="footer-actions">
-                  <button
-                    type="button"
-                    className="button"
-                    onClick={() => void window.presenter.openFilesDialog().then(applyResponse)}
-                  >
-                    Add Files
-                  </button>
-                  <button
-                    type="button"
-                    className="button button-primary"
-                    disabled={!eligibility.enabled}
-                    onClick={() =>
-                      void window.presenter
-                        .openSelection(session.selectedAssetIds)
-                        .then(applyResponse)
-                    }
-                  >
-                    Compare Selected
-                  </button>
-                </div>
-              </>
-            );
-          })()}
-        </footer>
-      ) : null}
+        {session && session.surface !== "grid" && session.view.metadataOpen ? (
+          <MetadataPanel
+            assets={selectedAssets}
+            onDismiss={() => updateView({ metadataOpen: false })}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }

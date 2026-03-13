@@ -155,7 +155,7 @@ describe("fixture-driven renderer coverage", () => {
           textContent={{ [asset.path]: content }}
           playbackCommand={null}
         />
-        <MetadataPanel assets={[asset]} />
+        <MetadataPanel assets={[asset]} onDismiss={() => {}} />
       </>
     );
 
@@ -246,6 +246,52 @@ describe("fixture-driven renderer coverage", () => {
     expect(screen.getAllByTestId("image-viewport")).toHaveLength(2);
   });
 
+  it("renders flat three-up and four-up compare layouts", () => {
+    const threeUp = findEntry("image-three-up");
+    const fourUp = findEntry("image-four-up");
+    const threeAssets = threeUp.entryPaths.map((entryPath, index) =>
+      buildAsset(
+        entryPath,
+        "image",
+        index === 0 ? threeUp.expectedMetadata : { ...threeUp.expectedMetadata, fileTypeLabel: "JPG" }
+      )
+    );
+
+    const { rerender } = render(
+      <CompareStage
+        assets={threeAssets}
+        sessionView={{ ...defaultSessionViewState, layout: "grid-3" }}
+        capability={getCompareCapability(threeAssets)}
+        textContent={{}}
+        playbackCommand={null}
+      />
+    );
+
+    expect(screen.getByTestId("compare-stage")).toHaveClass("stage-grid-three");
+    expect(screen.getAllByTestId("image-viewport")).toHaveLength(3);
+
+    const fourAssets = fourUp.entryPaths.map((entryPath, index) =>
+      buildAsset(
+        entryPath,
+        "image",
+        index === 0 ? fourUp.expectedMetadata : { ...fourUp.expectedMetadata, fileTypeLabel: "JPG" }
+      )
+    );
+
+    rerender(
+      <CompareStage
+        assets={fourAssets}
+        sessionView={{ ...defaultSessionViewState, layout: "grid-4" }}
+        capability={getCompareCapability(fourAssets)}
+        textContent={{}}
+        playbackCommand={null}
+      />
+    );
+
+    expect(screen.getByTestId("compare-stage")).toHaveClass("stage-grid-four");
+    expect(screen.getAllByTestId("image-viewport")).toHaveLength(4);
+  });
+
   it("centers a single visual asset in fit mode", () => {
     const entry = findEntry("image-png-primary");
     const asset = buildAsset(entry.path, "image", entry.expectedMetadata);
@@ -321,6 +367,7 @@ describe("fixture-driven renderer coverage", () => {
         onSelect={() => {}}
         onViewChange={() => {}}
         onCompare={() => {}}
+        onOpenFiles={() => {}}
         onOpenRecent={() => {}}
       />
     );

@@ -480,6 +480,69 @@ manifest.push({
 });
 
 manifest.push({
+  id: "image-three-up",
+  scenario: "compare",
+  family: "image",
+  path: "images/png-primary.png",
+  entryPaths: [
+    "images/png-primary.png",
+    "images/jpg-primary.jpg",
+    "images/webp-primary.webp"
+  ],
+  expectedSurface: "compare",
+  expectedSelection: ["png-primary.png", "jpg-primary.jpg", "webp-primary.webp"],
+  expectedMetadata: {
+    width: 160,
+    height: 96
+  },
+  expectedOutput: {
+    visibleLabels: ["png-primary.png", "jpg-primary.jpg", "webp-primary.webp"]
+  },
+  expectedViewport: {
+    kind: "image",
+    screenshotName: "three-up-compare.png"
+  },
+  compareEligible: true
+});
+
+manifest.push({
+  id: "image-four-up",
+  scenario: "compare",
+  family: "image",
+  path: "images/png-primary.png",
+  entryPaths: [
+    "images/png-primary.png",
+    "images/jpg-primary.jpg",
+    "images/webp-primary.webp",
+    "images/svg-primary.svg"
+  ],
+  expectedSurface: "compare",
+  expectedSelection: [
+    "png-primary.png",
+    "jpg-primary.jpg",
+    "webp-primary.webp",
+    "svg-primary.svg"
+  ],
+  expectedMetadata: {
+    width: 160,
+    height: 96
+  },
+  expectedOutput: {
+    visibleLabels: [
+      "png-primary.png",
+      "jpg-primary.jpg",
+      "webp-primary.webp",
+      "svg-primary.svg"
+    ]
+  },
+  expectedViewport: {
+    kind: "image",
+    screenshotName: "four-up-compare.png"
+  },
+  compareEligible: true
+});
+
+manifest.push({
   id: "gif-animated-primary",
   scenario: "single",
   family: "gif",

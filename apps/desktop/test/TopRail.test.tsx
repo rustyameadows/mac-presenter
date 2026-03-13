@@ -5,7 +5,7 @@ import { TopRail } from "../src/renderer/components/TopRail";
 
 const baseView: SessionViewState = {
   layout: "side-by-side",
-  background: "checker",
+  background: "white",
   backgroundColor: "#ffffff",
   zoom: 1,
   fitMode: "fit",
@@ -22,6 +22,7 @@ describe("TopRail", () => {
   it("renders diff toggle for image pairs", () => {
     render(
       <TopRail
+        surface="compare"
         family="image"
         assetCount={2}
         capability={getCompareCapability([
@@ -99,6 +100,7 @@ describe("TopRail", () => {
     const calls: string[] = [];
     render(
       <TopRail
+        surface="compare"
         family="video"
         assetCount={2}
         capability={{

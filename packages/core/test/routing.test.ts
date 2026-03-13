@@ -49,6 +49,7 @@ function asset(id: string, family: AssetRecord["family"]): AssetRecord {
 describe("routeIntake", () => {
   it("starts sessions with metadata hidden", () => {
     expect(defaultSessionViewState.metadataOpen).toBe(false);
+    expect(defaultSessionViewState.background).toBe("white");
   });
 
   it("routes folders to grid", () => {

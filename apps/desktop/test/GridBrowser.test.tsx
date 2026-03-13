@@ -63,7 +63,7 @@ const session: SessionRecord = {
   surface: "grid",
   view: {
     layout: "grid-3",
-    background: "checker",
+    background: "white",
     backgroundColor: "#ffffff",
     zoom: 1,
     fitMode: "fit",
@@ -87,6 +87,7 @@ describe("GridBrowser", () => {
         onSelect={() => {}}
         onViewChange={() => {}}
         onCompare={(assetIds) => compareCalls.push(assetIds)}
+        onOpenFiles={() => {}}
         onOpenRecent={() => {}}
       />
     );

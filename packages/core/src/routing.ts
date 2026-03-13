@@ -12,8 +12,8 @@ import type {
 
 export const defaultSessionViewState: SessionViewState = {
   layout: "single",
-  background: "checker",
-  backgroundColor: "#f2f2f2",
+  background: "white",
+  backgroundColor: "#ffffff",
   zoom: 1,
   fitMode: "fit",
   diffEnabled: false,

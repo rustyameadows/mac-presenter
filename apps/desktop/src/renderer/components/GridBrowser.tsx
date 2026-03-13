@@ -70,6 +70,7 @@ export function GridBrowser(props: {
   onSelect: (assetIds: string[]) => void;
   onViewChange: (patch: Partial<SessionRecord["view"]>) => void;
   onCompare: (assetIds: string[]) => void;
+  onOpenFiles: () => void;
   onOpenRecent: (id: string) => void;
 }) {
   const filteredAssets = props.session.assets
@@ -101,7 +102,7 @@ export function GridBrowser(props: {
   return (
     <section className="grid-shell" data-testid="grid-browser">
       <header className="grid-toolbar">
-        <div>
+        <div className="grid-toolbar-copy">
           <div className="section-title">Asset Browser</div>
           <div className="muted">
             Recursive folder intake lands here first. Refine the set, then open
@@ -140,6 +141,13 @@ export function GridBrowser(props: {
           </select>
           <button
             type="button"
+            className="button"
+            onClick={props.onOpenFiles}
+          >
+            Add Files
+          </button>
+          <button
+            type="button"
             className="button button-primary"
             disabled={!eligibility.enabled}
             onClick={() => props.onCompare(props.session.selectedAssetIds)}
@@ -149,6 +157,13 @@ export function GridBrowser(props: {
         </div>
       </header>
 
+      <div className="grid-status" data-testid="grid-status">
+        {selectedAssets.length} selected
+        {eligibility.reason ? (
+          <span className="muted"> · {eligibility.reason}</span>
+        ) : null}
+      </div>
+
       <div className="grid-layout">
         {filteredAssets.map((asset) => {
           const selected = props.session.selectedAssetIds.includes(asset.id);
@@ -156,7 +171,7 @@ export function GridBrowser(props: {
             <button
               type="button"
               key={asset.id}
-              className={`asset-card${selected ? " asset-card-selected" : ""}`}
+              className={`asset-tile${selected ? " asset-tile-selected" : ""}`}
               data-testid="asset-card"
               onClick={() => {
                 const next = selected
@@ -182,7 +197,7 @@ export function GridBrowser(props: {
         })}
       </div>
 
-      <aside className="recents-panel">
+      <section className="grid-recents">
         <div className="section-title">Recent sessions</div>
         {props.recentSessions.length === 0 ? (
           <div className="muted">No recents yet.</div>
@@ -199,7 +214,7 @@ export function GridBrowser(props: {
             </button>
           ))
         )}
-      </aside>
+      </section>
     </section>
   );
 }

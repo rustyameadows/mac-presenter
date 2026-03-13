@@ -13,16 +13,22 @@ Used when:
 - the intake set is incompatible for direct compare
 
 Features:
-- responsive preview card grid
+- flat asset wall with thin dividers
 - multi-select
 - sort and filter controls
-- compare button with eligibility feedback
-- recent sessions sidebar
+- compare button with eligibility feedback in the header
+- recent sessions list below the asset wall
 
 ## Compare Workspace
 Used when:
 - one asset is active for single view
 - two to four compatible assets are active for direct review
+
+Presentation model:
+- the chosen background drives the full renderer canvas
+- the default background is white
+- viewer layouts use one continuous field with thin dividers instead of pane cards
+- asset names appear as subtle overlay labels inside each region
 
 Layout modes:
 - single
@@ -46,6 +52,11 @@ Controls:
 - metadata toggle
 - back to grid when relevant
 
+Visual rules:
+- the rail sits directly on the active canvas color
+- controls use compact monochrome states with contrast based on the current background
+- session notices stay lightweight and do not create heavy chrome
+
 ## Family-Specific Behavior
 ### Images
 - all visual compare layouts
@@ -67,5 +78,5 @@ Controls:
 
 ## Metadata Presentation
 - asset labels stay with each viewport
-- full metadata lives in a collapsible side panel
+- full metadata opens in a non-reflowing overlay sheet
 - unsupported files still appear with metadata cards in grid mode

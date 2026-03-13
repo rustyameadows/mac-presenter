@@ -19,44 +19,19 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties
+  type CSSProperties,
+  type ReactNode
 } from "react";
 
+import {
+  codeViewerUnsafeCss,
+  getCodeViewerStyle,
+  getDiffThemeType
+} from "../presentation";
 import type { PlaybackCommand } from "./TopRail";
 
 function resolveTextLanguage(filename: string): FileContents["lang"] {
   return getFiletypeFromFileName(filename) ?? ("text" as FileContents["lang"]);
-}
-
-async function loadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Failed to load ${url}`));
-    image.src = url;
-  });
-}
-
-function backgroundStyle(view: SessionViewState): CSSProperties {
-  if (view.background === "checker") {
-    return {
-      backgroundImage:
-        "linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.06) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.06) 75%)",
-      backgroundSize: "20px 20px",
-      backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
-      backgroundColor: "#151922"
-    };
-  }
-
-  if (view.background === "black") {
-    return { backgroundColor: "#050505" };
-  }
-
-  if (view.background === "white") {
-    return { backgroundColor: "#ffffff" };
-  }
-
-  return { backgroundColor: view.backgroundColor };
 }
 
 function mediaStyle(view: SessionViewState): CSSProperties {
@@ -84,6 +59,77 @@ function mediaShellClassName(view: SessionViewState): string {
     : "media-shell media-shell-centered";
 }
 
+function textViewerOptions(view: SessionViewState) {
+  return {
+    themeType: getDiffThemeType(view),
+    overflow: "scroll" as const,
+    disableLineNumbers: false,
+    disableFileHeader: true,
+    unsafeCSS: codeViewerUnsafeCss
+  };
+}
+
+function textDiffOptions(view: SessionViewState) {
+  return {
+    themeType: getDiffThemeType(view),
+    diffStyle: view.textDiffMode,
+    diffIndicators: "bars" as const,
+    lineDiffType: "word" as const,
+    overflow: "scroll" as const,
+    disableFileHeader: true,
+    unsafeCSS: codeViewerUnsafeCss
+  };
+}
+
+function OverlayRow(props: {
+  lead?: ReactNode;
+  trail?: ReactNode;
+}) {
+  if (!props.lead && !props.trail) {
+    return null;
+  }
+
+  return (
+    <div className="stage-overlay-row">
+      <div className="stage-overlay-lead">{props.lead}</div>
+      <div className="stage-overlay-trail">{props.trail}</div>
+    </div>
+  );
+}
+
+function AssetLabel(props: { children: ReactNode }) {
+  return <span className="asset-label asset-label-overlay">{props.children}</span>;
+}
+
+function StageRegion(props: {
+  children: ReactNode;
+  label?: ReactNode;
+  note?: ReactNode;
+  className?: string;
+  dataTestId?: string;
+}) {
+  return (
+    <div className={`stage-region${props.className ? ` ${props.className}` : ""}`} data-testid={props.dataTestId}>
+      <OverlayRow
+        lead={props.label ? <AssetLabel>{props.label}</AssetLabel> : undefined}
+        trail={
+          props.note ? <span className="stage-note">{props.note}</span> : undefined
+        }
+      />
+      {props.children}
+    </div>
+  );
+}
+
+async function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`Failed to load ${url}`));
+    image.src = url;
+  });
+}
+
 function TextFilePane(props: {
   asset: AssetRecord;
   content: string;
@@ -99,22 +145,16 @@ function TextFilePane(props: {
   );
 
   return (
-    <div className="asset-pane asset-pane-text" data-testid="text-viewport">
-      <div className="asset-label">{props.asset.name}</div>
-      <div data-testid="text-body">
+    <StageRegion label={props.asset.name} className="stage-region-text" dataTestId="text-viewport">
+      <div className="text-region-body" data-testid="text-body">
         <File
+          className="code-viewer"
           file={file}
-          options={{
-            themeType: "dark",
-            overflow: "scroll",
-            disableLineNumbers: false
-          }}
-          style={{
-            fontSize: `${12 * props.view.zoom}px`
-          }}
+          options={textViewerOptions(props.view)}
+          style={getCodeViewerStyle(props.view)}
         />
       </div>
-    </div>
+    </StageRegion>
   );
 }
 
@@ -143,22 +183,27 @@ function TextDiffPane(props: {
   );
 
   return (
-    <div className="diff-shell" data-testid="diff-viewport">
-      <div className="diff-summary" data-testid="diff-summary">
-        Text/code diff · {props.view.textDiffMode === "split" ? "split" : "unified"} mode
-      </div>
-      <div data-testid="text-body">
-        <FileDiff
-          fileDiff={diff}
-          options={{
-            themeType: "dark",
-            diffStyle: props.view.textDiffMode,
-            lineDiffType: "word",
-            overflow: "scroll"
-          }}
-        />
-      </div>
-    </div>
+    <section className="stage-grid stage-grid-single" data-testid="compare-stage">
+      <StageRegion
+        label={`${props.left.name} → ${props.right.name}`}
+        note={
+          <span data-testid="diff-summary">
+            Text/code diff · {props.view.textDiffMode} mode
+          </span>
+        }
+        className="stage-region-text stage-region-diff"
+        dataTestId="diff-viewport"
+      >
+        <div className="text-region-body text-region-body-diff" data-testid="text-body">
+          <FileDiff
+            className="code-viewer code-viewer-diff"
+            fileDiff={diff}
+            options={textDiffOptions(props.view)}
+            style={getCodeViewerStyle(props.view)}
+          />
+        </div>
+      </StageRegion>
+    </section>
   );
 }
 
@@ -166,6 +211,7 @@ function VisualDiffPane(props: {
   left: AssetRecord;
   right: AssetRecord;
   view: SessionViewState;
+  setScrollRef: (element: HTMLDivElement | null) => void;
 }) {
   const [state, setState] = useState<{
     dataUrl: string;
@@ -244,32 +290,44 @@ function VisualDiffPane(props: {
     };
   }, [props.left.path, props.right.path]);
 
-  if (!state) {
-    return <div className="diff-shell" data-testid="diff-viewport">Rendering diff…</div>;
-  }
-
   return (
-    <div className="diff-shell" data-testid="diff-viewport">
-      <div className="diff-summary" data-testid="diff-summary">
-        {state.mismatchCount.toLocaleString()} changed pixels
-        {state.normalized ? " · normalized before diff" : ""}
-      </div>
-      <div
-        className="asset-viewport diff-stage"
-        data-testid="asset-viewport"
-        style={backgroundStyle(props.view)}
+    <section className="stage-grid stage-grid-single" data-testid="compare-stage">
+      <StageRegion
+        label={`${props.left.name} → ${props.right.name}`}
+        note={
+          <span data-testid="diff-summary">
+            {state
+              ? `${state.mismatchCount.toLocaleString()} changed pixels${
+                  state.normalized ? " · normalized before diff" : ""
+                }`
+              : "Rendering diff…"}
+          </span>
+        }
+        className="stage-region-diff"
+        dataTestId="diff-viewport"
       >
-        <div className={mediaShellClassName(props.view)} data-testid="visual-media-shell">
-          <img
-            className="diff-image"
-            data-testid="image-viewport"
-            src={state.dataUrl}
-            alt="Diff output"
-            style={mediaStyle(props.view)}
-          />
+        <div
+          className="asset-viewport diff-stage"
+          data-testid="asset-viewport"
+          ref={props.setScrollRef}
+        >
+          {state ? (
+            <div
+              className={mediaShellClassName(props.view)}
+              data-testid="visual-media-shell"
+            >
+              <img
+                className="diff-image"
+                data-testid="image-viewport"
+                src={state.dataUrl}
+                alt="Diff output"
+                style={mediaStyle(props.view)}
+              />
+            </div>
+          ) : null}
         </div>
-      </div>
-    </div>
+      </StageRegion>
+    </section>
   );
 }
 
@@ -278,6 +336,7 @@ function RevealPane(props: {
   right: AssetRecord;
   view: SessionViewState;
   vertical: boolean;
+  setScrollRef: (element: HTMLDivElement | null) => void;
 }) {
   const [reveal, setReveal] = useState(50);
   const clipStyle = props.vertical
@@ -285,36 +344,42 @@ function RevealPane(props: {
     : { clipPath: `inset(0 0 ${100 - reveal}% 0)` };
 
   return (
-    <div className="reveal-shell" data-testid="compare-stage">
-      <div className="reveal-stage" style={backgroundStyle(props.view)} data-testid="asset-viewport">
-        <img
-          className="reveal-image"
-          data-testid="image-viewport"
-          src={window.presenter.getMediaUrl(props.right.path)}
-          alt={props.right.name}
-          style={mediaStyle(props.view)}
+    <section className="stage-grid stage-grid-single" data-testid="compare-stage">
+      <StageRegion
+        label={props.left.name}
+        note={<span>{props.right.name}</span>}
+        className="stage-region-reveal"
+      >
+        <div
+          className="reveal-stage"
+          data-testid="asset-viewport"
+          ref={props.setScrollRef}
+        >
+          <img
+            className="reveal-image"
+            data-testid="image-viewport"
+            src={window.presenter.getMediaUrl(props.right.path)}
+            alt={props.right.name}
+            style={mediaStyle(props.view)}
+          />
+          <img
+            className="reveal-image reveal-top"
+            data-testid="image-viewport"
+            src={window.presenter.getMediaUrl(props.left.path)}
+            alt={props.left.name}
+            style={{ ...mediaStyle(props.view), ...clipStyle }}
+          />
+        </div>
+        <input
+          className="reveal-slider"
+          type="range"
+          min={0}
+          max={100}
+          value={reveal}
+          onChange={(event) => setReveal(Number(event.target.value))}
         />
-        <img
-          className="reveal-image reveal-top"
-          data-testid="image-viewport"
-          src={window.presenter.getMediaUrl(props.left.path)}
-          alt={props.left.name}
-          style={{ ...mediaStyle(props.view), ...clipStyle }}
-        />
-      </div>
-      <input
-        className="reveal-slider"
-        type="range"
-        min={0}
-        max={100}
-        value={reveal}
-        onChange={(event) => setReveal(Number(event.target.value))}
-      />
-      <div className="reveal-labels">
-        <span>{props.left.name}</span>
-        <span>{props.right.name}</span>
-      </div>
-    </div>
+      </StageRegion>
+    </section>
   );
 }
 
@@ -324,16 +389,13 @@ function VisualPane(props: {
   setVideoRef?: (element: HTMLVideoElement | null) => void;
   setScrollRef: (element: HTMLDivElement | null) => void;
 }) {
-  const baseStyle = mediaStyle(props.view);
   const mediaUrl = window.presenter.getMediaUrl(props.asset.path);
 
   return (
-    <div className="asset-pane" data-testid="compare-stage">
-      <div className="asset-label">{props.asset.name}</div>
+    <StageRegion label={props.asset.name} dataTestId="stage-region">
       <div
         className="asset-viewport"
         data-testid="asset-viewport"
-        style={backgroundStyle(props.view)}
         ref={props.setScrollRef}
       >
         <div className={mediaShellClassName(props.view)} data-testid="visual-media-shell">
@@ -345,7 +407,7 @@ function VisualPane(props: {
               src={mediaUrl}
               controls
               preload="metadata"
-              style={baseStyle}
+              style={mediaStyle(props.view)}
             />
           ) : (
             <img
@@ -353,12 +415,12 @@ function VisualPane(props: {
               data-testid={props.asset.family === "gif" ? "gif-viewport" : "image-viewport"}
               src={mediaUrl}
               alt={props.asset.name}
-              style={baseStyle}
+              style={mediaStyle(props.view)}
             />
           )}
         </div>
       </div>
-    </div>
+    </StageRegion>
   );
 }
 
@@ -372,6 +434,10 @@ export function CompareStage(props: {
   const syncingRef = useRef(false);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+
+  const registerStageRef = (id: string) => (element: HTMLDivElement | null) => {
+    stageRefs.current[id] = element;
+  };
 
   useEffect(() => {
     Object.values(stageRefs.current).forEach((element) => {
@@ -540,6 +606,7 @@ export function CompareStage(props: {
         left={props.assets[0]}
         right={props.assets[1]}
         view={props.sessionView}
+        setScrollRef={registerStageRef("visual-diff")}
       />
     );
   }
@@ -551,6 +618,7 @@ export function CompareStage(props: {
         right={props.assets[1]}
         view={props.sessionView}
         vertical={true}
+        setScrollRef={registerStageRef("reveal")}
       />
     );
   }
@@ -562,6 +630,7 @@ export function CompareStage(props: {
         right={props.assets[1]}
         view={props.sessionView}
         vertical={false}
+        setScrollRef={registerStageRef("reveal")}
       />
     );
   }
@@ -579,7 +648,7 @@ export function CompareStage(props: {
 
   return (
     <section className={stageClass} data-testid="compare-stage">
-      {props.assets.map((asset, index) => {
+      {props.assets.map((asset) => {
         if (asset.family === "text") {
           return (
             <TextFilePane
@@ -599,9 +668,7 @@ export function CompareStage(props: {
             setVideoRef={(element) => {
               videoRefs.current[asset.id] = element;
             }}
-            setScrollRef={(element) => {
-              stageRefs.current[asset.id] = element;
-            }}
+            setScrollRef={registerStageRef(asset.id)}
           />
         );
       })}

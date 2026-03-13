@@ -166,7 +166,13 @@ async function assertMetadataPanel(window, entry) {
   const metadataPanelsBeforeToggle = await window.locator('[data-testid="metadata-panel"]').count();
   assert.equal(metadataPanelsBeforeToggle, 0, `${entry.id} should start with metadata hidden`);
 
+  const stageWidthBefore = await window.evaluate(() => {
+    const stage = document.querySelector('[data-testid="compare-stage"]');
+    return stage instanceof HTMLElement ? stage.getBoundingClientRect().width : null;
+  });
+
   await window.getByRole("button", { name: "Show Metadata" }).click();
+  await window.waitForSelector('[data-testid="metadata-overlay"]');
   await window.waitForSelector('[data-testid="metadata-panel"]');
   const text = await window.getByTestId("metadata-panel").innerText();
 
@@ -188,6 +194,13 @@ async function assertMetadataPanel(window, entry) {
     assert.ok(text.includes("Duration"));
     assert.ok(text.includes("Codec"));
   }
+
+  const stageWidthAfter = await window.evaluate(() => {
+    const stage = document.querySelector('[data-testid="compare-stage"]');
+    return stage instanceof HTMLElement ? stage.getBoundingClientRect().width : null;
+  });
+
+  assert.equal(stageWidthAfter, stageWidthBefore, `${entry.id} metadata overlay reflowed the stage`);
 
   await window.getByRole("button", { name: "Hide Metadata" }).click();
   await window.waitForFunction(
@@ -443,13 +456,13 @@ async function runCompareSpecificAssertions(window, entry) {
     return;
   }
 
-  if (entry.family === "text") {
+  if (entry.family === "text" && entry.entryPaths.length === 2) {
     await window.getByRole("button", { name: "Diff" }).click();
     await window.waitForSelector('[data-testid="diff-viewport"]');
     await window.waitForSelector("text=Text/code diff");
   }
 
-  if (entry.family === "image" || entry.family === "gif") {
+  if ((entry.family === "image" || entry.family === "gif") && entry.entryPaths.length === 2) {
     await window.getByRole("button", { name: "Diff" }).click();
     await window.waitForSelector('[data-testid="diff-viewport"]');
     await window.waitForSelector("text=changed pixels");
@@ -533,6 +546,11 @@ async function run() {
       await assertZoomAnchorsAtOrigin(window);
       await window.screenshot({
         path: path.join(outputDir, "single-image-origin.png")
+      });
+      await window.getByRole("button", { name: "Show Metadata" }).click();
+      await window.waitForSelector('[data-testid="metadata-panel"]');
+      await window.screenshot({
+        path: path.join(outputDir, "metadata-overlay-open.png")
       });
     }
   } finally {
