@@ -12,6 +12,7 @@ Object.defineProperty(window, "presenter", {
     backToGrid: async () => ({ session: null, recentSessions: [], warnings: [] }),
     updateView: async () => ({ session: null, recentSessions: [], warnings: [] }),
     readTextAsset: async () => ({ path: "", content: "", encoding: "utf-8" }),
+    downloadPackage: async () => ({ canceled: true }),
     openRecentSession: async () => ({ session: null, recentSessions: [], warnings: [] }),
     reopenCurrentSession: async () => ({ session: null, recentSessions: [], warnings: [] }),
     getDebugState: async () => null,

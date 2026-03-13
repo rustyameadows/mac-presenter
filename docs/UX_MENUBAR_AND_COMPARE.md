@@ -56,7 +56,8 @@ Controls:
 - sync pan for visual pairs
 - sync playback and frame-step for video pairs
 - metadata toggle
-- a single right-side mode action:
+- a persistent right-side `Share` CTA that packages the current Session for handoff
+- mode actions remain alongside Share:
   - `Compare n` in grid
   - `Grid` when returning from compare is relevant
 
@@ -95,3 +96,11 @@ Visual rules:
 - asset labels stay with each viewport
 - full metadata opens in a non-reflowing overlay sheet
 - unsupported files still appear with metadata cards in grid mode
+
+## Share Export Package
+- The top-right `Share` CTA creates a downloadable `.zip` package from the active Session.
+- Package contents:
+  - `/assets/*` copies of original intake files.
+  - `/index.html` static viewer that preserves Presenter visual language for background modes and split viewing.
+- Static viewer intentionally excludes advanced runtime features (for example, diffing and synchronized pan/playback), but keeps lightweight compare affordances useful for handoff.
+- The package is designed as a future upload payload for storage-backed shared links.

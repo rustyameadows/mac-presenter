@@ -93,6 +93,8 @@ export function TopRail(props: {
   onGridDeselectAll: () => void;
   onGridCompare: () => void;
   onBackToGrid: () => void;
+  onDownloadPackage: () => void;
+  downloadBusy: boolean;
   onPlaybackCommand: (command: PlaybackCommand) => void;
 }) {
   const showViewerControls =
@@ -378,6 +380,16 @@ export function TopRail(props: {
               {`Compare ${props.gridSelectedCount}`}
             </button>
           ) : null}
+          <button
+            type="button"
+            aria-label="Share"
+            title="Share"
+            className="button button-primary"
+            disabled={props.downloadBusy || props.assetCount === 0}
+            onClick={props.onDownloadPackage}
+          >
+            {props.downloadBusy ? "Preparing…" : "Share"}
+          </button>
           {props.showBackToGrid ? (
             <button
               type="button"

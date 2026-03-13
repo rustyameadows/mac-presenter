@@ -97,6 +97,8 @@ describe("TopRail", () => {
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
         onBackToGrid={() => {}}
+        onDownloadPackage={() => {}}
+        downloadBusy={false}
         onPlaybackCommand={() => {}}
       />
     );
@@ -145,6 +147,8 @@ describe("TopRail", () => {
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
         onBackToGrid={() => {}}
+        onDownloadPackage={() => {}}
+        downloadBusy={false}
         onPlaybackCommand={(command) => calls.push(command.type)}
       />
     );
@@ -194,6 +198,8 @@ describe("TopRail", () => {
         onGridDeselectAll={() => calls.push("clear")}
         onGridCompare={() => calls.push("compare")}
         onBackToGrid={() => {}}
+        onDownloadPackage={() => {}}
+        downloadBusy={false}
         onPlaybackCommand={() => {}}
       />
     );
@@ -289,12 +295,15 @@ describe("TopRail", () => {
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
         onBackToGrid={() => {}}
+        onDownloadPackage={() => {}}
+        downloadBusy={false}
         onPlaybackCommand={() => {}}
       />
     );
 
     expect(screen.queryByRole("button", { name: "Open Files" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Open Folder" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Back to Grid" })).toBeInTheDocument();
   });
 });

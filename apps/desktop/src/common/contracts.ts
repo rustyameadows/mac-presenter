@@ -25,6 +25,12 @@ export interface TextAssetPayload {
   encoding: string | null;
 }
 
+export interface ExportPackageResponse {
+  canceled: boolean;
+  outputPath?: string;
+  error?: string;
+}
+
 export interface PresenterDebugSnapshot {
   enabled: boolean;
   session: SessionRecord | null;
@@ -45,6 +51,7 @@ export interface PresenterApi {
   backToGrid(): Promise<SessionResponse>;
   updateView(patch: Partial<SessionViewState>): Promise<SessionResponse>;
   readTextAsset(path: string): Promise<TextAssetPayload>;
+  downloadPackage(): Promise<ExportPackageResponse>;
   openRecentSession(id: string): Promise<SessionResponse>;
   reopenCurrentSession(): Promise<SessionResponse>;
   getDebugState(): Promise<PresenterDebugSnapshot | null>;
