@@ -1329,7 +1329,6 @@
     "expectedMetadata": {},
     "expectedOutput": {
       "visibleLabels": [
-        "Asset Browser",
         "plain-primary.txt",
         "png-primary.png"
       ]
@@ -1353,7 +1352,6 @@
     "expectedMetadata": {},
     "expectedOutput": {
       "visibleLabels": [
-        "Asset Browser",
         "png-primary.png",
         "svg-primary.svg"
       ]
@@ -1376,7 +1374,6 @@
     "expectedMetadata": {},
     "expectedOutput": {
       "visibleLabels": [
-        "Asset Browser",
         "archive-primary.bin",
         "document-primary.pdf"
       ]

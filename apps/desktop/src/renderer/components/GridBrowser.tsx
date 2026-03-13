@@ -1,5 +1,4 @@
 import {
-  getSelectionEligibility,
   type AssetRecord,
   type RecentSessionSummary,
   type SessionRecord
@@ -81,9 +80,6 @@ export function GridBrowser(props: {
   session: SessionRecord;
   recentSessions: RecentSessionSummary[];
   onSelect: (assetIds: string[]) => void;
-  onViewChange: (patch: Partial<SessionRecord["view"]>) => void;
-  onCompare: (assetIds: string[]) => void;
-  onOpenFiles: () => void;
   onOpenRecent: (id: string) => void;
 }) {
   const filteredAssets = props.session.assets
@@ -110,17 +106,6 @@ export function GridBrowser(props: {
     () => filteredAssets.map((asset) => asset.id),
     [filteredAssets]
   );
-
-  const selectedAssets = props.session.assets.filter((asset) =>
-    props.session.selectedAssetIds.includes(asset.id)
-  );
-  const eligibility = getSelectionEligibility(selectedAssets);
-  const visibleSelectedCount = visibleAssetIds.filter((id) =>
-    props.session.selectedAssetIds.includes(id)
-  ).length;
-  const allVisibleSelected =
-    visibleAssetIds.length > 0 && visibleSelectedCount === visibleAssetIds.length;
-  const hasVisibleSelection = visibleSelectedCount > 0;
 
   const selectVisible = () => {
     props.onSelect([
@@ -160,89 +145,6 @@ export function GridBrowser(props: {
 
   return (
     <section className="grid-shell" data-testid="grid-browser">
-      <header className="grid-toolbar">
-        <div className="grid-toolbar-copy">
-          <div className="section-title">Asset Browser</div>
-          <div className="muted">
-            Recursive folder intake lands here first. Refine the set, then open
-            compare.
-          </div>
-        </div>
-        <div className="toolbar-controls">
-          <select
-            aria-label="Grid Filter"
-            value={props.session.view.gridFilter}
-            onChange={(event) =>
-              props.onViewChange({
-                gridFilter: event.target.value as SessionRecord["view"]["gridFilter"]
-              })
-            }
-          >
-            <option value="all">All families</option>
-            <option value="image">Images</option>
-            <option value="gif">GIFs</option>
-            <option value="video">Videos</option>
-            <option value="text">Text</option>
-            <option value="unsupported">Unsupported</option>
-          </select>
-          <select
-            aria-label="Grid Sort"
-            value={props.session.view.gridSort}
-            onChange={(event) =>
-              props.onViewChange({
-                gridSort: event.target.value as SessionRecord["view"]["gridSort"]
-              })
-            }
-          >
-            <option value="name">Sort by name</option>
-            <option value="created">Created</option>
-            <option value="modified">Modified</option>
-            <option value="size">Size</option>
-            <option value="type">Type</option>
-          </select>
-          <button
-            type="button"
-            className="button"
-            onClick={props.onOpenFiles}
-          >
-            Add Files
-          </button>
-          <button
-            type="button"
-            className="button"
-            data-testid="grid-select-all"
-            disabled={visibleAssetIds.length === 0 || allVisibleSelected}
-            onClick={selectVisible}
-          >
-            Select All
-          </button>
-          <button
-            type="button"
-            className="button"
-            data-testid="grid-deselect-all"
-            disabled={!hasVisibleSelection}
-            onClick={deselectVisible}
-          >
-            Deselect All
-          </button>
-          <button
-            type="button"
-            className="button button-primary"
-            disabled={!eligibility.enabled}
-            onClick={() => props.onCompare(props.session.selectedAssetIds)}
-          >
-            Compare Selected
-          </button>
-        </div>
-      </header>
-
-      <div className="grid-status" data-testid="grid-status">
-        {selectedAssets.length} selected
-        {eligibility.reason ? (
-          <span className="muted"> · {eligibility.reason}</span>
-        ) : null}
-      </div>
-
       <div className="grid-layout">
         {filteredAssets.map((asset) => {
           const selected = props.session.selectedAssetIds.includes(asset.id);

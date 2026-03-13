@@ -94,6 +94,7 @@ export function getPresentationStyle(view: SessionViewState): CSSProperties {
   const baseRgb = hexToRgb(baseHex);
   const ink = tone === "light" ? hexToRgb("#111827") : hexToRgb("#f8fafc");
   const inverseInk = tone === "light" ? hexToRgb("#ffffff") : hexToRgb("#0b1020");
+  const accent = tone === "light" ? hexToRgb("#2563eb") : hexToRgb("#93c5fd");
   const divider = tone === "light" ? toRgbString(ink, 0.18) : toRgbString(ink, 0.16);
   const dividerStrong = tone === "light" ? toRgbString(ink, 0.28) : toRgbString(ink, 0.26);
   const muted = tone === "light" ? toRgbString(ink, 0.58) : toRgbString(ink, 0.62);
@@ -111,10 +112,16 @@ export function getPresentationStyle(view: SessionViewState): CSSProperties {
     color: toRgbString(ink),
     backgroundColor: baseHex,
     "--canvas-solid": baseHex,
+    "--canvas-surface-bg": baseHex,
+    "--canvas-surface-image": "none",
+    "--canvas-surface-size": "auto",
+    "--canvas-surface-position": "0 0",
+    "--canvas-surface-repeat": "repeat",
     "--canvas-ink": toRgbString(ink),
     "--canvas-ink-inverse": toRgbString(inverseInk),
     "--canvas-muted": muted,
     "--canvas-faint": faint,
+    "--canvas-accent": toRgbString(accent),
     "--canvas-divider": divider,
     "--canvas-divider-strong": dividerStrong,
     "--canvas-region": toRgbString(regionRgb, tone === "light" ? 0.78 : 0.58),
@@ -132,14 +139,22 @@ export function getPresentationStyle(view: SessionViewState): CSSProperties {
   };
 
   if (view.background === "checker") {
-    return {
+    const checkerStyle: PresentationStyle = {
       ...appStyle,
       backgroundColor: "#f6f6f4",
+      "--canvas-surface-bg": "#f6f6f4",
+      "--canvas-surface-image":
+        "linear-gradient(45deg, rgba(17,24,39,0.08) 25%, transparent 25%), linear-gradient(-45deg, rgba(17,24,39,0.08) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(17,24,39,0.08) 75%), linear-gradient(-45deg, transparent 75%, rgba(17,24,39,0.08) 75%)",
+      "--canvas-surface-size": "18px 18px",
+      "--canvas-surface-position": "0 0, 0 9px, 9px -9px, -9px 0",
+      "--canvas-surface-repeat": "repeat",
       backgroundImage:
         "linear-gradient(45deg, rgba(17,24,39,0.08) 25%, transparent 25%), linear-gradient(-45deg, rgba(17,24,39,0.08) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(17,24,39,0.08) 75%), linear-gradient(-45deg, transparent 75%, rgba(17,24,39,0.08) 75%)",
       backgroundSize: "18px 18px",
       backgroundPosition: "0 0, 0 9px, 9px -9px, -9px 0"
     };
+
+    return checkerStyle;
   }
 
   return appStyle;

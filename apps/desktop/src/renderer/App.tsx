@@ -252,6 +252,9 @@ export function App() {
         view={activeView}
         showBackToGrid={shouldShowBackToGrid(session)}
         notice={notice}
+        gridFilter={activeView.gridFilter}
+        gridSort={activeView.gridSort}
+        gridSelectedCount={session?.surface === "grid" ? session.selectedAssetIds.length : 0}
         hasGridVisibleAssets={gridVisibleAssetIds.length > 0}
         hasGridVisibleSelection={gridVisibleSelectionCount > 0}
         canGridCompare={session?.surface === "grid" ? gridEligibility.enabled : false}
@@ -280,6 +283,8 @@ export function App() {
         onSyncPlaybackChange={() =>
           session ? updateView({ syncPlayback: !session.view.syncPlayback }) : undefined
         }
+        onGridFilterChange={(gridFilter) => updateView({ gridFilter })}
+        onGridSortChange={(gridSort) => updateView({ gridSort })}
         onGridSelectAll={() => {
           if (!session || session.surface !== "grid") {
             return;
@@ -327,13 +332,6 @@ export function App() {
             session={session}
             onSelect={(assetIds) =>
               void window.presenter.setSelection(assetIds).then(applyResponse)
-            }
-            onViewChange={(patch) => updateView(patch)}
-            onCompare={(assetIds) =>
-              void window.presenter.openSelection(assetIds).then(applyResponse)
-            }
-            onOpenFiles={() =>
-              void window.presenter.openFilesDialog().then(applyResponse)
             }
             onOpenRecent={(id) =>
               void window.presenter.openRecentSession(id).then(applyResponse)

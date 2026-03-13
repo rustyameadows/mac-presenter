@@ -76,6 +76,9 @@ describe("TopRail", () => {
         view={baseView}
         showBackToGrid={false}
         notice={null}
+        gridFilter="all"
+        gridSort="name"
+        gridSelectedCount={0}
         hasGridVisibleAssets={false}
         hasGridVisibleSelection={false}
         canGridCompare={false}
@@ -88,6 +91,8 @@ describe("TopRail", () => {
         onTextDiffModeChange={() => {}}
         onSyncPanChange={() => {}}
         onSyncPlaybackChange={() => {}}
+        onGridFilterChange={() => {}}
+        onGridSortChange={() => {}}
         onGridSelectAll={() => {}}
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
@@ -121,6 +126,9 @@ describe("TopRail", () => {
         view={baseView}
         showBackToGrid={false}
         notice={null}
+        gridFilter="all"
+        gridSort="name"
+        gridSelectedCount={0}
         hasGridVisibleAssets={false}
         hasGridVisibleSelection={false}
         canGridCompare={false}
@@ -133,6 +141,8 @@ describe("TopRail", () => {
         onTextDiffModeChange={() => {}}
         onSyncPanChange={() => {}}
         onSyncPlaybackChange={() => {}}
+        onGridFilterChange={() => {}}
+        onGridSortChange={() => {}}
         onGridSelectAll={() => {}}
         onGridDeselectAll={() => {}}
         onGridCompare={() => {}}
@@ -167,6 +177,9 @@ describe("TopRail", () => {
         view={baseView}
         showBackToGrid={false}
         notice={null}
+        gridFilter="all"
+        gridSort="name"
+        gridSelectedCount={2}
         hasGridVisibleAssets={true}
         hasGridVisibleSelection={true}
         canGridCompare={true}
@@ -179,6 +192,8 @@ describe("TopRail", () => {
         onTextDiffModeChange={() => {}}
         onSyncPanChange={() => {}}
         onSyncPlaybackChange={() => {}}
+        onGridFilterChange={() => calls.push("filter")}
+        onGridSortChange={() => calls.push("sort")}
         onGridSelectAll={() => calls.push("select")}
         onGridDeselectAll={() => calls.push("clear")}
         onGridCompare={() => calls.push("compare")}
@@ -189,10 +204,16 @@ describe("TopRail", () => {
       />
     );
 
+    fireEvent.change(screen.getByRole("combobox", { name: "Grid Filter" }), {
+      target: { value: "image" }
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: "Grid Sort" }), {
+      target: { value: "size" }
+    });
     fireEvent.click(screen.getByRole("button", { name: "Select All Visible" }));
-    fireEvent.click(screen.getByRole("button", { name: "Deselect Visible" }));
-    fireEvent.click(screen.getByRole("button", { name: "Compare Visible Selection" }));
+    fireEvent.click(screen.getByRole("button", { name: "Clear Visible Selection" }));
+    fireEvent.click(screen.getByRole("button", { name: "Compare 2" }));
 
-    expect(calls).toEqual(["select", "clear", "compare"]);
+    expect(calls).toEqual(["filter", "sort", "select", "clear", "compare"]);
   });
 });

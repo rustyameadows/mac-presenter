@@ -78,60 +78,32 @@ const session: SessionRecord = {
 };
 
 describe("GridBrowser", () => {
-  it("starts with compare disabled when nothing is selected", () => {
+  it("does not render the old grid intro copy", () => {
     render(
       <GridBrowser
         session={session}
         recentSessions={[]}
         onSelect={() => {}}
-        onViewChange={() => {}}
-        onCompare={() => {}}
-        onOpenFiles={() => {}}
         onOpenRecent={() => {}}
       />
     );
 
-    expect(screen.getByRole("button", { name: "Compare Selected" })).toBeDisabled();
-    expect(screen.getByTestId("grid-select-all")).toBeEnabled();
-    expect(screen.getByTestId("grid-deselect-all")).toBeDisabled();
+    expect(screen.queryByText("Asset Browser")).toBeNull();
+    expect(
+      screen.queryByText(/Recursive folder intake lands here first/)
+    ).toBeNull();
   });
 
-  it("enables compare for a valid same-family selection", () => {
-    const compareCalls: string[][] = [];
-    render(
-      <GridBrowser
-        session={{ ...session, selectedAssetIds: ["one", "two"] }}
-        recentSessions={[]}
-        onSelect={() => {}}
-        onViewChange={() => {}}
-        onCompare={(assetIds) => compareCalls.push(assetIds)}
-        onOpenFiles={() => {}}
-        onOpenRecent={() => {}}
-      />
-    );
-
-    const compareButton = screen.getByRole("button", { name: "Compare Selected" });
-    expect(compareButton).toBeEnabled();
-    fireEvent.click(compareButton);
-    expect(compareCalls[0]).toEqual(["one", "two"]);
-  });
-
-  it("selects and deselects the visible grid set with buttons and shortcuts", () => {
+  it("selects and deselects the visible grid set with keyboard shortcuts", () => {
     const selectCalls: string[][] = [];
     const { rerender } = render(
       <GridBrowser
         session={session}
         recentSessions={[]}
         onSelect={(assetIds) => selectCalls.push(assetIds)}
-        onViewChange={() => {}}
-        onCompare={() => {}}
-        onOpenFiles={() => {}}
         onOpenRecent={() => {}}
       />
     );
-
-    fireEvent.click(screen.getByTestId("grid-select-all"));
-    expect(selectCalls.at(-1)).toEqual(["one", "two"]);
 
     fireEvent.keyDown(window, { key: "a", metaKey: true });
     expect(selectCalls.at(-1)).toEqual(["one", "two"]);
@@ -141,17 +113,24 @@ describe("GridBrowser", () => {
         session={{ ...session, selectedAssetIds: ["one", "two"] }}
         recentSessions={[]}
         onSelect={(assetIds) => selectCalls.push(assetIds)}
-        onViewChange={() => {}}
-        onCompare={() => {}}
-        onOpenFiles={() => {}}
         onOpenRecent={() => {}}
       />
     );
 
-    fireEvent.click(screen.getByTestId("grid-deselect-all"));
-    expect(selectCalls.at(-1)).toEqual([]);
-
     fireEvent.keyDown(window, { key: "a", metaKey: true, shiftKey: true });
     expect(selectCalls.at(-1)).toEqual([]);
+  });
+
+  it("uses an inner accent border for selected tiles", () => {
+    render(
+      <GridBrowser
+        session={{ ...session, selectedAssetIds: ["one"] }}
+        recentSessions={[]}
+        onSelect={() => {}}
+        onOpenRecent={() => {}}
+      />
+    );
+
+    expect(screen.getAllByTestId("asset-card")[0]).toHaveClass("asset-tile-selected");
   });
 });

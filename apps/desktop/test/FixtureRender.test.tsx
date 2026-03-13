@@ -384,9 +384,6 @@ describe("fixture-driven renderer coverage", () => {
         session={session}
         recentSessions={[]}
         onSelect={() => {}}
-        onViewChange={() => {}}
-        onCompare={() => {}}
-        onOpenFiles={() => {}}
         onOpenRecent={() => {}}
       />
     );

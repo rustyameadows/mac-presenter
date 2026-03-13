@@ -75,6 +75,7 @@
 - metadata overlays must not resize the compare stage
 - the smoke suite must include at least one plain `.txt` single-view scenario
 - grid-routed sessions must start with zero selected assets
+- grid compare affordance must stay in the fixed top rail as `Compare n`
 - grid, text/diff, and zoomed visual panes must scroll inside their own content regions rather than relying on page scroll
 - image diff notes must include both changed-pixel count and percentage
 - reveal compare must expose a draggable divider handle instead of a native range input
@@ -82,7 +83,7 @@
 ## Manual QA
 - drag two image files onto the menubar icon and confirm direct 2-up open
 - drag a folder and confirm grid browser routing
-- in grid view, confirm `Select All`, `Deselect All`, `Cmd+A`, and `Cmd+Shift+A`
+- in grid view, confirm `Select All`, `Clear`, `Cmd+A`, and `Cmd+Shift+A`
 - in a zoomed image compare, confirm `2x` / `4x` preserve the prior viewport center and allow scrolling
 - verify closing the presenter window hides it without quitting the tray app
 - verify the menubar app has no Dock icon

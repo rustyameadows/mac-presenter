@@ -16,11 +16,11 @@ Features:
 - flat asset wall with thin dividers
 - multi-select
 - initial folder/grid intake starts with no selected assets
-- `Select All` and `Deselect All` actions operate on the currently visible filtered set
+- `Select All` and `Clear` actions operate on the currently visible filtered set
 - `Cmd+A` selects all visible filtered assets and `Cmd+Shift+A` clears them
-- the fixed top rail mirrors select / clear / compare actions so they remain reachable while the grid scrolls
+- the fixed top rail centers filter / sort / select / clear controls so they remain reachable while the grid scrolls
 - sort and filter controls
-- compare button with eligibility feedback in the header
+- compare uses an inline `Compare n` action instead of a separate selected-count summary
 - recent sessions list below the asset wall
 
 ## Compare Workspace

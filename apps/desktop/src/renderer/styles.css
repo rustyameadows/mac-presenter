@@ -54,6 +54,7 @@ input {
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: space-between;
   min-width: 0;
   flex-wrap: nowrap;
 }
@@ -66,15 +67,20 @@ input {
   min-width: 0;
 }
 
-.rail-center {
+.rail-start {
+  flex: 1 1 0;
   justify-content: flex-start;
-  flex: 0 0 auto;
 }
 
-.rail-wrap {
-  flex: 1 1 auto;
+.rail-center {
+  flex: 0 1 auto;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.rail-end {
+  flex: 1 1 0;
   justify-content: flex-end;
-  min-width: 0;
 }
 
 .label-compact {
@@ -82,8 +88,7 @@ input {
 }
 
 .button,
-.rail-select,
-.toolbar-controls select {
+.rail-select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -104,8 +109,7 @@ input {
 }
 
 .button:hover,
-.rail-select:hover,
-.toolbar-controls select:hover {
+.rail-select:hover {
   background: var(--canvas-control-hover);
 }
 
@@ -310,6 +314,14 @@ input {
   overflow: hidden;
 }
 
+.stage-region-visual {
+  background-color: var(--canvas-surface-bg);
+  background-image: var(--canvas-surface-image);
+  background-size: var(--canvas-surface-size);
+  background-position: var(--canvas-surface-position);
+  background-repeat: var(--canvas-surface-repeat);
+}
+
 .stage-region-text {
   background: transparent;
 }
@@ -458,37 +470,11 @@ diffs-container.code-viewer {
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 10px;
+  gap: 12px;
   min-height: 0;
   padding: 8px 10px 12px;
   overflow: auto;
   overscroll-behavior: contain;
-}
-
-.grid-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.grid-toolbar-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.toolbar-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.grid-status {
-  font-size: 12px;
-  color: var(--canvas-muted);
 }
 
 .grid-layout {
@@ -500,11 +486,14 @@ diffs-container.code-viewer {
 }
 
 .asset-tile {
+  appearance: none;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 10px;
   min-height: 248px;
+  border: 0;
+  border-radius: 0;
   border-right: var(--divider-thickness) solid var(--canvas-divider);
   border-bottom: var(--divider-thickness) solid var(--canvas-divider);
   background: transparent;
@@ -514,9 +503,8 @@ diffs-container.code-viewer {
 }
 
 .asset-tile-selected {
-  outline: var(--divider-thickness) solid var(--canvas-divider-strong);
-  outline-offset: calc(-1 * var(--divider-thickness));
-  background: var(--canvas-faint);
+  box-shadow: inset 0 0 0 var(--divider-thickness) var(--canvas-accent);
+  background: transparent;
 }
 
 .asset-preview {
@@ -648,6 +636,17 @@ diffs-container.code-viewer {
   height: 100%;
 }
 
+.reveal-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--canvas-surface-bg);
+  background-image: var(--canvas-surface-image);
+  background-size: var(--canvas-surface-size);
+  background-position: var(--canvas-surface-position);
+  background-repeat: var(--canvas-surface-repeat);
+}
+
 .reveal-image {
   position: absolute;
   inset: 0;
@@ -694,13 +693,12 @@ diffs-container.code-viewer {
 @media (max-width: 1260px) {
   .top-rail-main,
   .rail-group,
-  .toolbar-controls {
+  .rail-center {
     gap: 4px;
   }
 
   .button,
-  .rail-select,
-  .toolbar-controls select {
+  .rail-select {
     min-height: 25px;
     padding: 0 7px;
     font-size: 11px;
@@ -717,13 +715,12 @@ diffs-container.code-viewer {
   }
 
   .rail-group,
-  .toolbar-controls {
+  .rail-center {
     gap: 3px;
   }
 
   .button,
-  .rail-select,
-  .toolbar-controls select {
+  .rail-select {
     min-height: 23px;
     padding: 0 6px;
     font-size: 10px;
@@ -746,26 +743,17 @@ diffs-container.code-viewer {
     height: 11px;
   }
 
-  .grid-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .toolbar-controls {
-    justify-content: flex-start;
-  }
 }
 
 @media (max-width: 980px) {
   .top-rail-main,
   .rail-group,
-  .toolbar-controls {
+  .rail-center {
     gap: 2px;
   }
 
   .button,
-  .rail-select,
-  .toolbar-controls select {
+  .rail-select {
     min-height: 22px;
     padding: 0 5px;
     font-size: 9px;

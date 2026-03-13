@@ -616,20 +616,21 @@ async function assertGridSelectionControls(window, entry) {
   const debug = await openScenario(window, entry);
   assert.equal(debug.selectedAssetIds.length, 0, "Folder grid should start deselected");
   await window.getByRole("button", { name: "Select All Visible" }).waitFor();
-  await window.getByRole("button", { name: "Deselect Visible" }).waitFor();
-  await window.getByRole("button", { name: "Compare Visible Selection" }).waitFor();
+  await window.getByRole("button", { name: "Clear Visible Selection" }).waitFor();
+  await window.getByRole("button", { name: "Compare 0" }).waitFor();
   assert.equal(
-    await window.getByRole("button", { name: "Compare Selected" }).isDisabled(),
+    await window.getByRole("button", { name: "Compare 0" }).isDisabled(),
     true,
     "Compare should stay disabled with no grid selection"
   );
 
   await window.getByRole("combobox", { name: "Grid Filter" }).selectOption("image");
-  await window.getByTestId("grid-select-all").click();
+  await window.getByRole("button", { name: "Select All Visible" }).click();
   await window.waitForFunction(async () => {
     const state = await window.presenter.getDebugState();
     return JSON.stringify(state?.selectedAssetNames ?? []) === JSON.stringify(["png-primary.png"]);
   });
+  await window.getByRole("button", { name: "Compare 1" }).waitFor();
 
   await window.keyboard.press("Meta+Shift+A");
   await window.waitForFunction(async () => {
@@ -637,7 +638,7 @@ async function assertGridSelectionControls(window, entry) {
     return (state?.selectedAssetIds ?? []).length === 0;
   });
 
-  await window.getByTestId("grid-deselect-all").waitFor();
+  await window.getByRole("button", { name: "Compare 0" }).waitFor();
   await window.keyboard.press("Meta+A");
   await window.waitForFunction(async () => {
     const state = await window.presenter.getDebugState();

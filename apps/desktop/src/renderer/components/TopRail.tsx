@@ -72,6 +72,9 @@ export function TopRail(props: {
   view: SessionViewState;
   showBackToGrid: boolean;
   notice: string | null;
+  gridFilter: SessionViewState["gridFilter"];
+  gridSort: SessionViewState["gridSort"];
+  gridSelectedCount: number;
   hasGridVisibleAssets: boolean;
   hasGridVisibleSelection: boolean;
   canGridCompare: boolean;
@@ -84,6 +87,8 @@ export function TopRail(props: {
   onTextDiffModeChange: (mode: TextDiffMode) => void;
   onSyncPanChange: () => void;
   onSyncPlaybackChange: () => void;
+  onGridFilterChange: (filter: SessionViewState["gridFilter"]) => void;
+  onGridSortChange: (sort: SessionViewState["gridSort"]) => void;
   onGridSelectAll: () => void;
   onGridDeselectAll: () => void;
   onGridCompare: () => void;
@@ -94,11 +99,12 @@ export function TopRail(props: {
 }) {
   const showViewerControls =
     props.surface === "single" || props.surface === "compare";
+  const showGridControls = props.surface === "grid";
 
   return (
     <header className="top-rail" data-testid="top-rail">
       <div className="top-rail-main" data-testid="top-rail-main">
-        <div className="rail-group">
+        <div className="rail-group rail-start">
           <button
             type="button"
             className={`button${props.view.background === "checker" ? " is-active" : ""}`}
@@ -137,8 +143,9 @@ export function TopRail(props: {
           </label>
         </div>
 
-        {showViewerControls ? (
-          <div className="rail-group rail-center">
+        <div className="rail-group rail-center">
+          {showViewerControls ? (
+            <>
             {[1, 2, 4, 10].map((zoom) => (
               <button
                 key={zoom}
@@ -149,14 +156,7 @@ export function TopRail(props: {
                 {zoom}x
               </button>
             ))}
-          </div>
-        ) : (
-          <div className="rail-group rail-center" />
-        )}
-
-        <div className="rail-group rail-wrap">
-          {showViewerControls
-            ? props.capability.layouts
+              {props.capability.layouts
                 .filter((layout) => layout !== "diff")
                 .map((layout) => {
                   const fullLabel = fullLabelForLayout(layout);
@@ -173,23 +173,20 @@ export function TopRail(props: {
                       {labelForLayout(layout)}
                     </button>
                   );
-                })
-            : null}
+                })}
 
-          {showViewerControls && props.capability.canDiff ? (
-            <button
-              type="button"
-              aria-label="Diff"
-              title="Diff"
-              className={`button${props.view.layout === "diff" ? " is-active" : ""}`}
-              onClick={props.onToggleDiff}
-            >
-              Diff
-            </button>
-          ) : null}
+              {props.capability.canDiff ? (
+                <button
+                  type="button"
+                  aria-label="Diff"
+                  title="Diff"
+                  className={`button${props.view.layout === "diff" ? " is-active" : ""}`}
+                  onClick={props.onToggleDiff}
+                >
+                  Diff
+                </button>
+              ) : null}
 
-          {showViewerControls ? (
-            <>
               <button
                 type="button"
                 aria-label="Fit"
@@ -229,93 +226,123 @@ export function TopRail(props: {
                   Pan
                 </button>
               ) : null}
+              {props.family === "video" ? (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Sync Playback"
+                    title="Sync Playback"
+                    className={`button${props.view.syncPlayback ? " is-active" : ""}`}
+                    onClick={props.onSyncPlaybackChange}
+                  >
+                    Sync
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Step Backward"
+                    title="Step Backward"
+                    className="button"
+                    onClick={() =>
+                      props.onPlaybackCommand({
+                        type: "step-backward",
+                        token: Date.now()
+                      })
+                    }
+                  >
+                    -1f
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Play/Pause"
+                    title="Play/Pause"
+                    className="button"
+                    onClick={() =>
+                      props.onPlaybackCommand({
+                        type: "play-pause",
+                        token: Date.now()
+                      })
+                    }
+                  >
+                    Play
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Step Forward"
+                    title="Step Forward"
+                    className="button"
+                    onClick={() =>
+                      props.onPlaybackCommand({
+                        type: "step-forward",
+                        token: Date.now()
+                      })
+                    }
+                  >
+                    +1f
+                  </button>
+                </>
+              ) : null}
+
+              {props.family === "text" && props.view.layout === "diff" ? (
+                <select
+                  aria-label="Text Diff Mode"
+                  className="rail-select"
+                  value={props.view.textDiffMode}
+                  onChange={(event) =>
+                    props.onTextDiffModeChange(event.target.value as TextDiffMode)
+                  }
+                >
+                  <option value="split">Split</option>
+                  <option value="unified">Unified</option>
+                </select>
+              ) : null}
+
+              <button
+                type="button"
+                aria-label={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
+                title={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
+                className="button"
+                onClick={props.onMetadataToggle}
+              >
+                Meta
+              </button>
             </>
           ) : null}
 
-          {showViewerControls && props.family === "video" ? (
+          {showGridControls ? (
             <>
-              <button
-                type="button"
-                aria-label="Sync Playback"
-                title="Sync Playback"
-                className={`button${props.view.syncPlayback ? " is-active" : ""}`}
-                onClick={props.onSyncPlaybackChange}
-              >
-                Sync
-              </button>
-              <button
-                type="button"
-                aria-label="Step Backward"
-                title="Step Backward"
-                className="button"
-                onClick={() =>
-                  props.onPlaybackCommand({
-                    type: "step-backward",
-                    token: Date.now()
-                  })
+              <select
+                aria-label="Grid Filter"
+                className="rail-select"
+                value={props.gridFilter}
+                onChange={(event) =>
+                  props.onGridFilterChange(
+                    event.target.value as SessionViewState["gridFilter"]
+                  )
                 }
               >
-                -1f
-              </button>
-              <button
-                type="button"
-                aria-label="Play/Pause"
-                title="Play/Pause"
-                className="button"
-                onClick={() =>
-                  props.onPlaybackCommand({
-                    type: "play-pause",
-                    token: Date.now()
-                  })
+                <option value="all">All families</option>
+                <option value="image">Images</option>
+                <option value="gif">GIFs</option>
+                <option value="video">Videos</option>
+                <option value="text">Text</option>
+                <option value="unsupported">Unsupported</option>
+              </select>
+              <select
+                aria-label="Grid Sort"
+                className="rail-select"
+                value={props.gridSort}
+                onChange={(event) =>
+                  props.onGridSortChange(
+                    event.target.value as SessionViewState["gridSort"]
+                  )
                 }
               >
-                Play
-              </button>
-              <button
-                type="button"
-                aria-label="Step Forward"
-                title="Step Forward"
-                className="button"
-                onClick={() =>
-                  props.onPlaybackCommand({
-                    type: "step-forward",
-                    token: Date.now()
-                  })
-                }
-              >
-                +1f
-              </button>
-            </>
-          ) : null}
-
-          {showViewerControls && props.family === "text" && props.view.layout === "diff" ? (
-            <select
-              aria-label="Text Diff Mode"
-              className="rail-select"
-              value={props.view.textDiffMode}
-              onChange={(event) =>
-                props.onTextDiffModeChange(event.target.value as TextDiffMode)
-              }
-            >
-              <option value="split">Split</option>
-              <option value="unified">Unified</option>
-            </select>
-          ) : null}
-
-          {showViewerControls ? (
-            <button
-              type="button"
-              aria-label={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
-              title={props.view.metadataOpen ? "Hide Metadata" : "Show Metadata"}
-              className="button"
-              onClick={props.onMetadataToggle}
-            >
-              Meta
-            </button>
-          ) : null}
-
-          {props.surface === "grid" ? (
-            <>
+                <option value="name">Sort by name</option>
+                <option value="created">Created</option>
+                <option value="modified">Modified</option>
+                <option value="size">Size</option>
+                <option value="type">Type</option>
+              </select>
               <button
                 type="button"
                 aria-label="Select All Visible"
@@ -328,8 +355,8 @@ export function TopRail(props: {
               </button>
               <button
                 type="button"
-                aria-label="Deselect Visible"
-                title="Deselect Visible"
+                aria-label="Clear Visible Selection"
+                title="Clear Visible Selection"
                 className="button"
                 disabled={!props.hasGridVisibleSelection}
                 onClick={props.onGridDeselectAll}
@@ -338,17 +365,19 @@ export function TopRail(props: {
               </button>
               <button
                 type="button"
-                aria-label="Compare Visible Selection"
-                title="Compare Visible Selection"
+                aria-label={`Compare ${props.gridSelectedCount}`}
+                title={`Compare ${props.gridSelectedCount}`}
                 className={`button${props.canGridCompare ? " button-primary" : ""}`}
                 disabled={!props.canGridCompare}
                 onClick={props.onGridCompare}
               >
-                Compare
+                {`Compare ${props.gridSelectedCount}`}
               </button>
             </>
           ) : null}
+        </div>
 
+        <div className="rail-group rail-end">
           <button
             type="button"
             aria-label="Open Files"

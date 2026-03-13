@@ -352,6 +352,7 @@ function AssetLabel(props: { children: ReactNode }) {
 function StageRegion(props: {
   children: ReactNode;
   label?: ReactNode;
+  trailLabel?: ReactNode;
   note?: ReactNode;
   className?: string;
   dataTestId?: string;
@@ -361,7 +362,11 @@ function StageRegion(props: {
       <OverlayRow
         lead={props.label ? <AssetLabel>{props.label}</AssetLabel> : undefined}
         trail={
-          props.note ? <span className="stage-note">{props.note}</span> : undefined
+          props.trailLabel ? (
+            <AssetLabel>{props.trailLabel}</AssetLabel>
+          ) : props.note ? (
+            <span className="stage-note">{props.note}</span>
+          ) : undefined
         }
       />
       {props.children}
@@ -566,7 +571,7 @@ function VisualDiffPane(props: {
             )}
           </span>
         }
-        className="stage-region-diff"
+        className="stage-region-diff stage-region-visual"
         dataTestId="diff-viewport"
       >
         <ScrollableVisualViewport
@@ -670,8 +675,8 @@ function RevealPane(props: {
     <section className="stage-grid stage-grid-single" data-testid="compare-stage">
       <StageRegion
         label={props.left.name}
-        note={<span>{props.right.name}</span>}
-        className="stage-region-reveal"
+        trailLabel={props.right.name}
+        className="stage-region-reveal stage-region-visual"
       >
         <ScrollableVisualViewport
           intrinsicSize={intrinsicSize}
@@ -682,19 +687,22 @@ function RevealPane(props: {
         >
           {() => (
             <div className="reveal-canvas" ref={canvasRef}>
-              <img
-                className="reveal-image"
-                data-testid="image-viewport"
-                src={window.presenter.getMediaUrl(props.right.path)}
-                alt={props.right.name}
-              />
-              <img
-                className="reveal-image reveal-top"
-                data-testid="image-viewport"
-                src={window.presenter.getMediaUrl(props.left.path)}
-                alt={props.left.name}
-                style={clipStyle}
-              />
+              <div className="reveal-layer">
+                <img
+                  className="reveal-image"
+                  data-testid="image-viewport"
+                  src={window.presenter.getMediaUrl(props.right.path)}
+                  alt={props.right.name}
+                />
+              </div>
+              <div className="reveal-layer reveal-top" style={clipStyle}>
+                <img
+                  className="reveal-image"
+                  data-testid="image-viewport"
+                  src={window.presenter.getMediaUrl(props.left.path)}
+                  alt={props.left.name}
+                />
+              </div>
               <button
                 type="button"
                 className={`reveal-handle${props.vertical ? "" : " reveal-handle-horizontal"}`}
@@ -723,7 +731,11 @@ function VisualPane(props: {
   const intrinsicSize = getAssetSize(props.asset);
 
   return (
-    <StageRegion label={props.asset.name} dataTestId="stage-region">
+    <StageRegion
+      label={props.asset.name}
+      className="stage-region-visual"
+      dataTestId="stage-region"
+    >
       <ScrollableVisualViewport
         intrinsicSize={intrinsicSize}
         view={props.view}
