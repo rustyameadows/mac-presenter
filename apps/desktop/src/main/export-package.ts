@@ -47,6 +47,13 @@ function escapeHtml(value: string): string {
     .replaceAll('"', "&quot;");
 }
 
+function serializeForInlineScript(value: unknown): string {
+  return JSON.stringify(value)
+    .replaceAll("<", "\\u003c")
+    .replaceAll("\u2028", "\\u2028")
+    .replaceAll("\u2029", "\\u2029");
+}
+
 function runZip(targetZipPath: string, sourceDir: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const zip = spawn("zip", ["-r", "-q", targetZipPath, "."], {
@@ -122,7 +129,7 @@ function buildViewerHtml(title: string, assets: ViewerAsset[]): string {
     </main>
   </div>
   <script>
-    const assets = ${JSON.stringify(assets)};
+    const assets = ${serializeForInlineScript(assets)};
     let activeIndex = Math.max(0, assets.findIndex((asset) => asset.selected));
     const list = document.getElementById("asset-list");
     const paneA = document.getElementById("pane-a");
