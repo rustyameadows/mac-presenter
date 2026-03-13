@@ -246,6 +246,41 @@ describe("fixture-driven renderer coverage", () => {
     expect(screen.getAllByTestId("image-viewport")).toHaveLength(2);
   });
 
+  it("centers a single visual asset in fit mode", () => {
+    const entry = findEntry("image-png-primary");
+    const asset = buildAsset(entry.path, "image", entry.expectedMetadata);
+
+    render(
+      <CompareStage
+        assets={[asset]}
+        sessionView={{ ...defaultSessionViewState, layout: "single", fitMode: "fit", zoom: 1 }}
+        capability={getCompareCapability([asset])}
+        textContent={{}}
+        playbackCommand={null}
+      />
+    );
+
+    expect(screen.getByTestId("visual-media-shell")).toHaveClass("media-shell-centered");
+    expect(screen.getAllByTestId("compare-stage")[0]).toHaveClass("stage-grid-single");
+  });
+
+  it("anchors a single visual asset to the origin when zoomed", () => {
+    const entry = findEntry("image-png-primary");
+    const asset = buildAsset(entry.path, "image", entry.expectedMetadata);
+
+    render(
+      <CompareStage
+        assets={[asset]}
+        sessionView={{ ...defaultSessionViewState, layout: "single", fitMode: "fit", zoom: 2 }}
+        capability={getCompareCapability([asset])}
+        textContent={{}}
+        playbackCommand={null}
+      />
+    );
+
+    expect(screen.getByTestId("visual-media-shell")).toHaveClass("media-shell-origin");
+  });
+
   it("renders video compare panes with media controls", () => {
     const entry = findEntry("video-mp4-pair");
     const left = buildAsset(entry.path, "video", entry.expectedMetadata);

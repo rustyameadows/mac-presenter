@@ -74,6 +74,16 @@ function mediaStyle(view: SessionViewState): CSSProperties {
   };
 }
 
+function alignMediaToOrigin(view: SessionViewState): boolean {
+  return view.zoom !== 1 || view.fitMode === "actual";
+}
+
+function mediaShellClassName(view: SessionViewState): string {
+  return alignMediaToOrigin(view)
+    ? "media-shell media-shell-origin"
+    : "media-shell media-shell-centered";
+}
+
 function TextFilePane(props: {
   asset: AssetRecord;
   content: string;
@@ -152,7 +162,11 @@ function TextDiffPane(props: {
   );
 }
 
-function VisualDiffPane(props: { left: AssetRecord; right: AssetRecord }) {
+function VisualDiffPane(props: {
+  left: AssetRecord;
+  right: AssetRecord;
+  view: SessionViewState;
+}) {
   const [state, setState] = useState<{
     dataUrl: string;
     mismatchCount: number;
@@ -240,7 +254,21 @@ function VisualDiffPane(props: { left: AssetRecord; right: AssetRecord }) {
         {state.mismatchCount.toLocaleString()} changed pixels
         {state.normalized ? " · normalized before diff" : ""}
       </div>
-      <img className="diff-image" data-testid="image-viewport" src={state.dataUrl} alt="Diff output" />
+      <div
+        className="asset-viewport diff-stage"
+        data-testid="asset-viewport"
+        style={backgroundStyle(props.view)}
+      >
+        <div className={mediaShellClassName(props.view)} data-testid="visual-media-shell">
+          <img
+            className="diff-image"
+            data-testid="image-viewport"
+            src={state.dataUrl}
+            alt="Diff output"
+            style={mediaStyle(props.view)}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -308,25 +336,27 @@ function VisualPane(props: {
         style={backgroundStyle(props.view)}
         ref={props.setScrollRef}
       >
-        {props.asset.family === "video" ? (
-          <video
-            ref={props.setVideoRef}
-            className="asset-media"
-            data-testid="video-viewport"
-            src={mediaUrl}
-            controls
-            preload="metadata"
-            style={baseStyle}
-          />
-        ) : (
-          <img
-            className="asset-media"
-            data-testid={props.asset.family === "gif" ? "gif-viewport" : "image-viewport"}
-            src={mediaUrl}
-            alt={props.asset.name}
-            style={baseStyle}
-          />
-        )}
+        <div className={mediaShellClassName(props.view)} data-testid="visual-media-shell">
+          {props.asset.family === "video" ? (
+            <video
+              ref={props.setVideoRef}
+              className="asset-media"
+              data-testid="video-viewport"
+              src={mediaUrl}
+              controls
+              preload="metadata"
+              style={baseStyle}
+            />
+          ) : (
+            <img
+              className="asset-media"
+              data-testid={props.asset.family === "gif" ? "gif-viewport" : "image-viewport"}
+              src={mediaUrl}
+              alt={props.asset.name}
+              style={baseStyle}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -342,6 +372,17 @@ export function CompareStage(props: {
   const syncingRef = useRef(false);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+
+  useEffect(() => {
+    Object.values(stageRefs.current).forEach((element) => {
+      if (!element) {
+        return;
+      }
+
+      element.scrollLeft = 0;
+      element.scrollTop = 0;
+    });
+  }, [props.assets, props.sessionView.fitMode, props.sessionView.layout, props.sessionView.zoom]);
 
   useEffect(() => {
     if (!props.sessionView.syncPan) {
@@ -494,7 +535,13 @@ export function CompareStage(props: {
       );
     }
 
-    return <VisualDiffPane left={props.assets[0]} right={props.assets[1]} />;
+    return (
+      <VisualDiffPane
+        left={props.assets[0]}
+        right={props.assets[1]}
+        view={props.sessionView}
+      />
+    );
   }
 
   if (props.sessionView.layout === "reveal-vertical" && props.assets.length === 2) {
@@ -520,7 +567,9 @@ export function CompareStage(props: {
   }
 
   const stageClass =
-    props.sessionView.layout === "top-bottom"
+    props.sessionView.layout === "single"
+      ? "stage-grid stage-grid-single"
+      : props.sessionView.layout === "top-bottom"
       ? "stage-grid stage-grid-top-bottom"
       : props.sessionView.layout === "grid-4"
         ? "stage-grid stage-grid-four"

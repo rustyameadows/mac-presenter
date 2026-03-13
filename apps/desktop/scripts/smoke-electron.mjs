@@ -188,6 +188,11 @@ async function assertMetadataPanel(window, entry) {
     assert.ok(text.includes("Duration"));
     assert.ok(text.includes("Codec"));
   }
+
+  await window.getByRole("button", { name: "Hide Metadata" }).click();
+  await window.waitForFunction(
+    () => document.querySelector('[data-testid="metadata-panel"]') === null
+  );
 }
 
 async function assertVisibleLabels(window, entry) {
@@ -335,6 +340,95 @@ async function assertViewport(window, entry) {
   }
 }
 
+async function assertWorkspaceFill(window, entry) {
+  if (entry.expectedSurface === "grid") {
+    return;
+  }
+
+  const widths = await window.evaluate(() => {
+    const workspace = document.querySelector('[data-testid="workspace-shell"]');
+    const stage = workspace?.firstElementChild;
+
+    if (!(workspace instanceof HTMLElement) || !(stage instanceof HTMLElement)) {
+      return null;
+    }
+
+    return {
+      workspaceWidth: workspace.getBoundingClientRect().width,
+      stageWidth: stage.getBoundingClientRect().width
+    };
+  });
+
+  assert(widths, `${entry.id} missing workspace shell`);
+  assert.ok(
+    widths.stageWidth >= widths.workspaceWidth * 0.9,
+    `${entry.id} left an oversized empty gutter`
+  );
+}
+
+async function assertSingleRowToolbar(window) {
+  await window.waitForSelector('[data-testid="top-rail-main"]');
+  const toolbar = await window.evaluate(() => {
+    const main = document.querySelector('[data-testid="top-rail-main"]');
+    if (!(main instanceof HTMLElement)) {
+      return null;
+    }
+
+    const tops = [...main.children]
+      .filter((node) => node instanceof HTMLElement)
+      .map((node) => Math.round(node.getBoundingClientRect().top));
+
+    return {
+      tops
+    };
+  });
+
+  assert(toolbar, "Missing top rail main row");
+  assert.equal(new Set(toolbar.tops).size, 1, "Top rail controls wrapped onto multiple rows");
+}
+
+async function assertCenteredFitImage(window) {
+  const geometry = await window.evaluate(() => {
+    const viewport = document.querySelector('[data-testid="asset-viewport"]');
+    const image = document.querySelector('[data-testid="image-viewport"]');
+    if (!(viewport instanceof HTMLElement) || !(image instanceof HTMLElement)) {
+      return null;
+    }
+
+    const viewportRect = viewport.getBoundingClientRect();
+    const imageRect = image.getBoundingClientRect();
+
+    return {
+      horizontalDelta: Math.abs(
+        (imageRect.left - viewportRect.left) - (viewportRect.right - imageRect.right)
+      ),
+      verticalDelta: Math.abs(
+        (imageRect.top - viewportRect.top) - (viewportRect.bottom - imageRect.bottom)
+      )
+    };
+  });
+
+  assert(geometry, "Missing single-image geometry");
+  assert.ok(geometry.horizontalDelta <= 20, "Single image is not horizontally centered");
+  assert.ok(geometry.verticalDelta <= 20, "Single image is not vertically centered");
+}
+
+async function assertZoomAnchorsAtOrigin(window) {
+  await window.getByRole("button", { name: "2x" }).click();
+  await window.waitForFunction(() => {
+    const shell = document.querySelector('[data-testid="visual-media-shell"]');
+    const viewport = document.querySelector('[data-testid="asset-viewport"]');
+
+    return (
+      shell instanceof HTMLElement &&
+      viewport instanceof HTMLElement &&
+      shell.classList.contains("media-shell-origin") &&
+      viewport.scrollLeft === 0 &&
+      viewport.scrollTop === 0
+    );
+  });
+}
+
 async function assertSurface(window, entry, debug) {
   await window.waitForSelector(`[data-testid="surface-${entry.expectedSurface}"]`);
   assert.equal(debug.surface, entry.expectedSurface);
@@ -362,7 +456,7 @@ async function runCompareSpecificAssertions(window, entry) {
   }
 
   if (entry.family === "video") {
-    await window.waitForSelector("text=Sync Playback");
+    await window.getByRole("button", { name: "Sync Playback" }).waitFor();
   }
 }
 
@@ -409,12 +503,37 @@ async function run() {
         await assertVisibleLabels(window, entry);
         assertMetadata(entry, debug);
         await assertViewport(window, entry);
+        await assertWorkspaceFill(window, entry);
         await runCompareSpecificAssertions(window, entry);
         await maybeCaptureScreenshot(window, entry);
       } catch (error) {
         console.error(`Smoke scenario failed: ${entry.id}`);
         throw error;
       }
+    }
+
+    const toolbarScenario = manifest.find((entry) => entry.id === "text-plain-pair");
+    const imageScenario = manifest.find((entry) => entry.id === "image-png-primary");
+
+    if (toolbarScenario) {
+      await openScenario(window, toolbarScenario);
+      await window.setViewportSize({ width: 960, height: 720 });
+      await assertSingleRowToolbar(window);
+      await window.screenshot({
+        path: path.join(outputDir, "top-rail-960.png")
+      });
+    }
+
+    if (imageScenario) {
+      await openScenario(window, imageScenario);
+      await assertCenteredFitImage(window);
+      await window.screenshot({
+        path: path.join(outputDir, "single-image-fit.png")
+      });
+      await assertZoomAnchorsAtOrigin(window);
+      await window.screenshot({
+        path: path.join(outputDir, "single-image-origin.png")
+      });
     }
   } finally {
     await app.close();

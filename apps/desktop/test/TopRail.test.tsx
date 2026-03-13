@@ -129,7 +129,7 @@ describe("TopRail", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "+1f" }));
+    fireEvent.click(screen.getByRole("button", { name: "Step Forward" }));
     expect(calls).toContain("step-forward");
   });
 });
