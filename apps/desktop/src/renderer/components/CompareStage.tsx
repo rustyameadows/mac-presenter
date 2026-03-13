@@ -22,6 +22,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject
 } from "react";
@@ -44,6 +45,13 @@ interface Size {
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+function formatPercent(value: number): string {
+  return new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: value > 0 && value < 1 ? 2 : 0,
+    maximumFractionDigits: 2
+  }).format(value);
 }
 
 function getAssetSize(asset: AssetRecord): Size | null {
@@ -456,6 +464,7 @@ function VisualDiffPane(props: {
   const [state, setState] = useState<{
     dataUrl: string;
     mismatchCount: number;
+    mismatchPercent: number;
     normalized: boolean;
     size: Size;
   } | null>(null);
@@ -521,6 +530,7 @@ function VisualDiffPane(props: {
         setState({
           dataUrl: diffCanvas.toDataURL("image/png"),
           mismatchCount,
+          mismatchPercent: (mismatchCount / (plan.width * plan.height)) * 100,
           normalized: plan.normalized,
           size: {
             width: plan.width,
@@ -540,12 +550,20 @@ function VisualDiffPane(props: {
       <StageRegion
         label={`${props.left.name} → ${props.right.name}`}
         note={
-          <span data-testid="diff-summary">
-            {state
-              ? `${state.mismatchCount.toLocaleString()} changed pixels${
-                  state.normalized ? " · normalized before diff" : ""
-                }`
-              : "Rendering diff…"}
+          <span data-testid="diff-summary" className="diff-summary-note">
+            {state ? (
+              <>
+                <span>{state.mismatchCount.toLocaleString()} changed pixels</span>
+                <span className="diff-summary-subline">
+                  {formatPercent(state.mismatchPercent)}% of pixels changed
+                </span>
+                {state.normalized ? (
+                  <span className="diff-summary-subline">Normalized before diff</span>
+                ) : null}
+              </>
+            ) : (
+              "Rendering diff…"
+            )}
           </span>
         }
         className="stage-region-diff"
@@ -583,6 +601,7 @@ function RevealPane(props: {
   setScrollRef: (element: HTMLDivElement | null) => void;
 }) {
   const [reveal, setReveal] = useState(50);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
   const intrinsicSize = useMemo(() => {
     const leftSize = getAssetSize(props.left);
     const rightSize = getAssetSize(props.right);
@@ -598,6 +617,54 @@ function RevealPane(props: {
   const clipStyle = props.vertical
     ? { clipPath: `inset(0 ${100 - reveal}% 0 0)` }
     : { clipPath: `inset(0 0 ${100 - reveal}% 0)` };
+  const updateReveal = useCallback(
+    (clientX: number, clientY: number) => {
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        return;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const nextReveal = props.vertical
+        ? ((clientX - rect.left) / rect.width) * 100
+        : ((clientY - rect.top) / rect.height) * 100;
+      setReveal(clamp(nextReveal, 0, 100));
+    },
+    [props.vertical]
+  );
+  const startRevealDrag = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      updateReveal(event.clientX, event.clientY);
+
+      const pointerId = event.pointerId;
+      const handleMove = (moveEvent: PointerEvent) => {
+        if (moveEvent.pointerId !== pointerId) {
+          return;
+        }
+
+        updateReveal(moveEvent.clientX, moveEvent.clientY);
+      };
+
+      const handleEnd = (endEvent: PointerEvent) => {
+        if (endEvent.pointerId !== pointerId) {
+          return;
+        }
+
+        window.removeEventListener("pointermove", handleMove);
+        window.removeEventListener("pointerup", handleEnd);
+        window.removeEventListener("pointercancel", handleEnd);
+      };
+
+      window.addEventListener("pointermove", handleMove);
+      window.addEventListener("pointerup", handleEnd);
+      window.addEventListener("pointercancel", handleEnd);
+    },
+    [updateReveal]
+  );
+  const revealHandleStyle = props.vertical
+    ? { left: `calc(${reveal}% - 8px)` }
+    : { top: `calc(${reveal}% - 8px)` };
 
   return (
     <section className="stage-grid stage-grid-single" data-testid="compare-stage">
@@ -614,7 +681,7 @@ function RevealPane(props: {
           setScrollRef={props.setScrollRef}
         >
           {() => (
-            <div className="reveal-canvas">
+            <div className="reveal-canvas" ref={canvasRef}>
               <img
                 className="reveal-image"
                 data-testid="image-viewport"
@@ -628,17 +695,19 @@ function RevealPane(props: {
                 alt={props.left.name}
                 style={clipStyle}
               />
+              <button
+                type="button"
+                className={`reveal-handle${props.vertical ? "" : " reveal-handle-horizontal"}`}
+                data-testid="reveal-handle"
+                aria-label="Adjust Reveal Divider"
+                onPointerDown={startRevealDrag}
+                style={revealHandleStyle}
+              >
+                <span className="reveal-handle-line" aria-hidden="true" />
+              </button>
             </div>
           )}
         </ScrollableVisualViewport>
-        <input
-          className="reveal-slider"
-          type="range"
-          min={0}
-          max={100}
-          value={reveal}
-          onChange={(event) => setReveal(Number(event.target.value))}
-        />
       </StageRegion>
     </section>
   );

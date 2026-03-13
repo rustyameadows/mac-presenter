@@ -615,6 +615,9 @@ async function assertWrappedTextDiff(window) {
 async function assertGridSelectionControls(window, entry) {
   const debug = await openScenario(window, entry);
   assert.equal(debug.selectedAssetIds.length, 0, "Folder grid should start deselected");
+  await window.getByRole("button", { name: "Select All Visible" }).waitFor();
+  await window.getByRole("button", { name: "Deselect Visible" }).waitFor();
+  await window.getByRole("button", { name: "Compare Visible Selection" }).waitFor();
   assert.equal(
     await window.getByRole("button", { name: "Compare Selected" }).isDisabled(),
     true,
@@ -668,6 +671,7 @@ async function runCompareSpecificAssertions(window, entry) {
     await window.getByRole("button", { name: "Diff" }).click();
     await window.waitForSelector('[data-testid="diff-viewport"]');
     await window.waitForSelector("text=changed pixels");
+    await window.waitForSelector("text=of pixels changed");
   }
 
   if (entry.family === "video") {

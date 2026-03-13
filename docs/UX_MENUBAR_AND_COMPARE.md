@@ -18,6 +18,7 @@ Features:
 - initial folder/grid intake starts with no selected assets
 - `Select All` and `Deselect All` actions operate on the currently visible filtered set
 - `Cmd+A` selects all visible filtered assets and `Cmd+Shift+A` clears them
+- the fixed top rail mirrors select / clear / compare actions so they remain reachable while the grid scrolls
 - sort and filter controls
 - compare button with eligibility feedback in the header
 - recent sessions list below the asset wall
@@ -66,6 +67,7 @@ Visual rules:
 ### Images
 - all visual compare layouts
 - pixel diff
+- image diff notes show both changed-pixel count and changed-pixel percentage
 
 ### GIFs
 - same compare layouts as images where browser playback is reliable
@@ -81,6 +83,9 @@ Visual rules:
 - diff via `@pierre/diffs`
 - syntax-aware rendering when language detection is available
 - wrapped content with scroll contained inside the text region instead of the page
+
+## Reveal Interaction
+- reveal compare uses a direct draggable divider line over the media instead of a separate range control below the stage
 
 ## Metadata Presentation
 - asset labels stay with each viewport

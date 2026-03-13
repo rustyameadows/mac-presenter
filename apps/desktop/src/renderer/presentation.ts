@@ -168,7 +168,7 @@ export function getCodeViewerStyle(view: SessionViewState): CSSProperties {
     "--diffs-bg-separator-override": divider,
     "--diffs-gap-inline": "10px",
     "--diffs-gap-block": "8px",
-    "--diffs-gap-style": `1px solid ${divider}`,
+    "--diffs-gap-style": `2px solid ${divider}`,
     "--diffs-font-size": `${12 * view.zoom}px`,
     "--diffs-line-height": `${Math.max(18, Math.round(19 * view.zoom))}px`
   } as PresentationStyle;

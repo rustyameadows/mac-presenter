@@ -76,6 +76,9 @@ describe("TopRail", () => {
         view={baseView}
         showBackToGrid={false}
         notice={null}
+        hasGridVisibleAssets={false}
+        hasGridVisibleSelection={false}
+        canGridCompare={false}
         onLayoutChange={() => {}}
         onToggleDiff={() => {}}
         onBackgroundChange={() => {}}
@@ -85,6 +88,9 @@ describe("TopRail", () => {
         onTextDiffModeChange={() => {}}
         onSyncPanChange={() => {}}
         onSyncPlaybackChange={() => {}}
+        onGridSelectAll={() => {}}
+        onGridDeselectAll={() => {}}
+        onGridCompare={() => {}}
         onBackToGrid={() => {}}
         onOpenFiles={() => {}}
         onOpenFolder={() => {}}
@@ -115,6 +121,9 @@ describe("TopRail", () => {
         view={baseView}
         showBackToGrid={false}
         notice={null}
+        hasGridVisibleAssets={false}
+        hasGridVisibleSelection={false}
+        canGridCompare={false}
         onLayoutChange={() => {}}
         onToggleDiff={() => {}}
         onBackgroundChange={() => {}}
@@ -124,6 +133,9 @@ describe("TopRail", () => {
         onTextDiffModeChange={() => {}}
         onSyncPanChange={() => {}}
         onSyncPlaybackChange={() => {}}
+        onGridSelectAll={() => {}}
+        onGridDeselectAll={() => {}}
+        onGridCompare={() => {}}
         onBackToGrid={() => {}}
         onOpenFiles={() => {}}
         onOpenFolder={() => {}}
@@ -133,5 +145,54 @@ describe("TopRail", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Step Forward" }));
     expect(calls).toContain("step-forward");
+  });
+
+  it("surfaces grid selection actions in the fixed rail", () => {
+    const calls: string[] = [];
+
+    render(
+      <TopRail
+        surface="grid"
+        family="mixed"
+        assetCount={0}
+        capability={{
+          enabled: false,
+          family: "mixed",
+          layouts: ["grid-3"],
+          canDiff: false,
+          canReveal: false,
+          canSyncPan: false,
+          canSyncPlayback: false
+        }}
+        view={baseView}
+        showBackToGrid={false}
+        notice={null}
+        hasGridVisibleAssets={true}
+        hasGridVisibleSelection={true}
+        canGridCompare={true}
+        onLayoutChange={() => {}}
+        onToggleDiff={() => {}}
+        onBackgroundChange={() => {}}
+        onZoomChange={() => {}}
+        onFitModeChange={() => {}}
+        onMetadataToggle={() => {}}
+        onTextDiffModeChange={() => {}}
+        onSyncPanChange={() => {}}
+        onSyncPlaybackChange={() => {}}
+        onGridSelectAll={() => calls.push("select")}
+        onGridDeselectAll={() => calls.push("clear")}
+        onGridCompare={() => calls.push("compare")}
+        onBackToGrid={() => {}}
+        onOpenFiles={() => {}}
+        onOpenFolder={() => {}}
+        onPlaybackCommand={() => {}}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Select All Visible" }));
+    fireEvent.click(screen.getByRole("button", { name: "Deselect Visible" }));
+    fireEvent.click(screen.getByRole("button", { name: "Compare Visible Selection" }));
+
+    expect(calls).toEqual(["select", "clear", "compare"]);
   });
 });

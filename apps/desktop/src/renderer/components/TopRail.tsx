@@ -6,6 +6,7 @@ import type {
   SessionViewState,
   TextDiffMode
 } from "@presenter/core";
+import type { CSSProperties } from "react";
 
 export interface PlaybackCommand {
   type: "step-backward" | "step-forward" | "play-pause";
@@ -71,6 +72,9 @@ export function TopRail(props: {
   view: SessionViewState;
   showBackToGrid: boolean;
   notice: string | null;
+  hasGridVisibleAssets: boolean;
+  hasGridVisibleSelection: boolean;
+  canGridCompare: boolean;
   onLayoutChange: (layout: CompareLayout) => void;
   onToggleDiff: () => void;
   onBackgroundChange: (background: SessionViewState["background"], backgroundColor: string) => void;
@@ -80,6 +84,9 @@ export function TopRail(props: {
   onTextDiffModeChange: (mode: TextDiffMode) => void;
   onSyncPanChange: () => void;
   onSyncPlaybackChange: () => void;
+  onGridSelectAll: () => void;
+  onGridDeselectAll: () => void;
+  onGridCompare: () => void;
   onBackToGrid: () => void;
   onOpenFiles: () => void;
   onOpenFolder: () => void;
@@ -113,10 +120,15 @@ export function TopRail(props: {
           >
             <CompactLabel full="White" compact="Wht" />
           </button>
-          <label className="color-picker">
+          <label
+            className={`button color-picker-button${props.view.background === "custom" ? " is-active" : ""}`}
+            style={{ "--color-picker-value": props.view.backgroundColor } as CSSProperties}
+          >
             <CompactLabel full="Custom" compact="Cust" />
+            <span className="color-picker-swatch" aria-hidden="true" />
             <input
               type="color"
+              aria-label="Custom Background"
               value={props.view.backgroundColor}
               onChange={(event) =>
                 props.onBackgroundChange("custom", event.target.value)
@@ -301,6 +313,42 @@ export function TopRail(props: {
               Meta
             </button>
           ) : null}
+
+          {props.surface === "grid" ? (
+            <>
+              <button
+                type="button"
+                aria-label="Select All Visible"
+                title="Select All Visible"
+                className="button"
+                disabled={!props.hasGridVisibleAssets}
+                onClick={props.onGridSelectAll}
+              >
+                Select All
+              </button>
+              <button
+                type="button"
+                aria-label="Deselect Visible"
+                title="Deselect Visible"
+                className="button"
+                disabled={!props.hasGridVisibleSelection}
+                onClick={props.onGridDeselectAll}
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                aria-label="Compare Visible Selection"
+                title="Compare Visible Selection"
+                className={`button${props.canGridCompare ? " button-primary" : ""}`}
+                disabled={!props.canGridCompare}
+                onClick={props.onGridCompare}
+              >
+                Compare
+              </button>
+            </>
+          ) : null}
+
           <button
             type="button"
             aria-label="Open Files"

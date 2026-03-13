@@ -2,6 +2,7 @@ import {
   defaultSessionViewState,
   deriveCurrentFamily,
   getCompareCapability,
+  getSelectionEligibility,
   type AssetLoadWarning,
   type AssetRecord,
   type SessionRecord,
@@ -201,6 +202,25 @@ export function App() {
   }, [session, textContent]);
 
   const selectedAssets = getSelectedAssets(session);
+  const gridVisibleAssetIds =
+    session?.surface === "grid"
+      ? session.assets
+          .filter((asset) =>
+            session.view.gridFilter === "all"
+              ? true
+              : asset.family === session.view.gridFilter
+          )
+          .map((asset) => asset.id)
+      : [];
+  const gridSelectedAssets =
+    session?.surface === "grid"
+      ? session.assets.filter((asset) => session.selectedAssetIds.includes(asset.id))
+      : [];
+  const gridVisibleSelectionCount =
+    session?.surface === "grid"
+      ? gridVisibleAssetIds.filter((id) => session.selectedAssetIds.includes(id)).length
+      : 0;
+  const gridEligibility = getSelectionEligibility(gridSelectedAssets);
   const capability = getCompareCapability(selectedAssets);
   const family = deriveCurrentFamily(selectedAssets);
   const activeView = session?.view ?? defaultSessionViewState;
@@ -232,6 +252,9 @@ export function App() {
         view={activeView}
         showBackToGrid={shouldShowBackToGrid(session)}
         notice={notice}
+        hasGridVisibleAssets={gridVisibleAssetIds.length > 0}
+        hasGridVisibleSelection={gridVisibleSelectionCount > 0}
+        canGridCompare={session?.surface === "grid" ? gridEligibility.enabled : false}
         onLayoutChange={(layout) => updateView({ layout })}
         onToggleDiff={() => {
           if (!session) {
@@ -257,6 +280,35 @@ export function App() {
         onSyncPlaybackChange={() =>
           session ? updateView({ syncPlayback: !session.view.syncPlayback }) : undefined
         }
+        onGridSelectAll={() => {
+          if (!session || session.surface !== "grid") {
+            return;
+          }
+
+          void window.presenter
+            .setSelection([
+              ...new Set([...session.selectedAssetIds, ...gridVisibleAssetIds])
+            ])
+            .then(applyResponse);
+        }}
+        onGridDeselectAll={() => {
+          if (!session || session.surface !== "grid") {
+            return;
+          }
+
+          void window.presenter
+            .setSelection(
+              session.selectedAssetIds.filter((id) => !gridVisibleAssetIds.includes(id))
+            )
+            .then(applyResponse);
+        }}
+        onGridCompare={() => {
+          if (!session || session.surface !== "grid") {
+            return;
+          }
+
+          void window.presenter.openSelection(session.selectedAssetIds).then(applyResponse);
+        }}
         onBackToGrid={() => void window.presenter.backToGrid().then(applyResponse)}
         onOpenFiles={() => void window.presenter.openFilesDialog().then(applyResponse)}
         onOpenFolder={() => void window.presenter.openFolderDialog().then(applyResponse)}

@@ -37,6 +37,7 @@
 - explicit 3-up and 4-up viewer rendering
 - metadata overlay content without workspace reflow
 - grid bulk-selection controls and mac shortcuts against the visible filtered set
+- fixed-rail grid selection / compare actions
 - centered visual zoom behavior with measurable overflow after `2x` / `4x`
 - unsupported-state rendering
 - long-document viewport behavior and non-empty body output
@@ -75,6 +76,8 @@
 - the smoke suite must include at least one plain `.txt` single-view scenario
 - grid-routed sessions must start with zero selected assets
 - grid, text/diff, and zoomed visual panes must scroll inside their own content regions rather than relying on page scroll
+- image diff notes must include both changed-pixel count and percentage
+- reveal compare must expose a draggable divider handle instead of a native range input
 
 ## Manual QA
 - drag two image files onto the menubar icon and confirm direct 2-up open

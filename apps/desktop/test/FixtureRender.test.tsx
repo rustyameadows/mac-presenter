@@ -327,6 +327,25 @@ describe("fixture-driven renderer coverage", () => {
     expect(screen.getByTestId("visual-media-shell")).toHaveClass("media-shell-origin");
   });
 
+  it("renders a direct-manipulation reveal handle instead of a native slider", () => {
+    const entry = findEntry("image-png-pair");
+    const left = buildAsset(entry.path, "image", entry.expectedMetadata);
+    const right = buildAsset(entry.variantPath ?? "", "image", entry.expectedMetadata);
+
+    render(
+      <CompareStage
+        assets={[left, right]}
+        sessionView={{ ...defaultSessionViewState, layout: "reveal-vertical" }}
+        capability={getCompareCapability([left, right])}
+        textContent={{}}
+        playbackCommand={null}
+      />
+    );
+
+    expect(screen.getByTestId("reveal-handle")).toBeInTheDocument();
+    expect(document.querySelector('input[type="range"]')).toBeNull();
+  });
+
   it("renders video compare panes with media controls", () => {
     const entry = findEntry("video-mp4-pair");
     const left = buildAsset(entry.path, "video", entry.expectedMetadata);
